@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Valuation - D&M Consultoria Financeira</title>
+  <title>Diagnóstico de Valor Empresarial - D&M Consultoria Financeira</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -526,6 +526,15 @@
       color: #666;
     }
 
+    .context-note {
+      font-size: 0.85rem;
+      color: #999;
+      font-style: italic;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--light);
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1024px) {
       .container {
@@ -610,51 +619,51 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-logo">
-      <h1>Calculadora de Valuation</h1>
+      <h1>Diagnóstico de Valor</h1>
     </div>
 
     <ul class="sidebar-menu">
       <!-- Seção 1: Início -->
       <li class="menu-section">
-        <span class="menu-section-title">1. Início</span>
+        <span class="menu-section-title">1. Contexto</span>
         <div class="menu-item active" onclick="goToStep('inicio')" data-step="inicio">
-          <span class="menu-icon">ℹ️</span>
-          <span>Antes de Começar</span>
+          <span class="menu-icon">📊</span>
+          <span>O Que Realmente Importa</span>
         </div>
       </li>
 
       <!-- Seção 2: Financeiro -->
       <li class="menu-section">
-        <span class="menu-section-title">2. Financeiro</span>
+        <span class="menu-section-title">2. Empresa</span>
         <div class="menu-item" onclick="goToStep('empresa')" data-step="empresa">
           <span class="menu-icon">🏢</span>
-          <span>Perfil da Empresa</span>
+          <span>Estrutura & Operação</span>
         </div>
         <div class="menu-item" onclick="goToStep('performance')" data-step="performance">
-          <span class="menu-icon">📊</span>
-          <span>Performance Financeira</span>
+          <span class="menu-icon">💰</span>
+          <span>Geração de Caixa</span>
         </div>
       </li>
 
       <!-- Seção 3: Informações -->
       <li class="menu-section">
-        <span class="menu-section-title">3. Informações</span>
+        <span class="menu-section-title">3. Gestão</span>
         <div class="menu-item" onclick="goToStep('maturidade')" data-step="maturidade">
-          <span class="menu-icon">✓</span>
-          <span>Maturidade Gerencial</span>
+          <span class="menu-icon">⚙️</span>
+          <span>Profissionalização</span>
         </div>
         <div class="menu-item" onclick="goToStep('contato')" data-step="contato">
           <span class="menu-icon">👤</span>
-          <span>Dados de Contato</span>
+          <span>Seus Dados</span>
         </div>
       </li>
 
       <!-- Seção 4: Resultados -->
       <li class="menu-section">
-        <span class="menu-section-title">4. Resultado</span>
+        <span class="menu-section-title">4. Análise</span>
         <div class="menu-item locked" onclick="goToStep('resultado')" data-step="resultado">
-          <span class="menu-icon">🔒</span>
-          <span>Seu Valuation</span>
+          <span class="menu-icon">🔍</span>
+          <span>Leitura Estratégica</span>
         </div>
       </li>
     </ul>
@@ -666,7 +675,7 @@
     <div class="progress-section">
       <div class="progress-wrapper">
         <div class="progress-label">
-          <span>Progresso</span>
+          <span>Progresso do Diagnóstico</span>
           <span id="progressPercent">0%</span>
         </div>
         <div class="progress-bar">
@@ -681,25 +690,25 @@
       <!-- INÍCIO -->
       <div class="content-section active" id="inicio">
         <div class="section-header">
-          <div class="section-icon">ℹ️</div>
-          <h2 class="section-title">Antes de Começar</h2>
-          <p class="section-description">Conheça como funciona nossa calculadora de valuation.</p>
+          <div class="section-icon">📊</div>
+          <h2 class="section-title">O Que Realmente Aumenta ou Destrói Valor</h2>
+          <p class="section-description">Um diagnóstico estratégico sobre a verdadeira maturidade do seu negócio.</p>
         </div>
 
         <div class="content-with-image">
           <div>
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Calculadora de Valuation D&M</h3>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Por Que Faturamento Não é Valuation</h3>
             <p style="font-size: 1rem; line-height: 1.8; color: #666; margin-bottom: 20px;">
-              A Calculadora de Valuation D&M oferece uma estimativa preliminar do valor da sua empresa. Desenvolvida por nossos especialistas, utiliza as mais avançadas metodologias de cálculo, incorporando inteligência para analisar as particularidades específicas do seu negócio.
+              Muitas empresas crescem aumentando risco operacional, não valor. Lucro sem previsibilidade de caixa não sustenta crescimento. Dependência de sócios ou poucos clientes reduz múltiplos de negociação drasticamente.
             </p>
             <p style="font-size: 1rem; line-height: 1.8; color: #666; margin-bottom: 20px;">
-              Obtenha <strong>insights precisos</strong> sobre o potencial valor de sua empresa de forma rápida e confiável. Este diagnóstico preliminar não substitui um laudo técnico oficial, mas oferece uma visão estratégica valiosa para seu negócio.
+              Este diagnóstico analisa os <strong>fatores reais que aumentam valor</strong>: maturidade gerencial, estrutura financeira, previsibilidade operacional, geração consistente de caixa e independência de pessoas-chave. Não é uma calculadora automática — é uma <strong>leitura estratégica</strong> sobre o potencial de negociação da sua empresa.
             </p>
             <p style="font-size: 0.9rem; color: #999; font-style: italic;">
-              Leva aproximadamente <strong>5-10 minutos</strong> para completar.
+              Leva aproximadamente <strong>5-10 minutos</strong>. Resultado confidencial, direto ao seu e-mail.
             </p>
           </div>
-          <div class="content-image">📈</div>
+          <div class="content-image">💼</div>
         </div>
       </div>
 
@@ -707,8 +716,8 @@
       <div class="content-section" id="empresa">
         <div class="section-header">
           <div class="section-icon">🏢</div>
-          <h2 class="section-title">Perfil da Empresa</h2>
-          <p class="section-description">Informações básicas sobre sua operação.</p>
+          <h2 class="section-title">Estrutura & Operação</h2>
+          <p class="section-description">Tamanho, segmento e tempo de consolidação importam na avaliação de risco.</p>
         </div>
 
         <div class="form-group">
@@ -734,6 +743,7 @@
 
         <div class="form-group">
           <label>Faturamento Anual Aproximado</label>
+          <p class="context-note">Empresas maiores geralmente desfrutam de múltiplos mais altos, mas só se a operação for profissionalizada.</p>
           <div class="radio-options">
             <label class="radio-option">
               <input type="radio" name="faturamento" value="Até R$ 500 mil">
@@ -761,12 +771,14 @@
 
         <div class="form-group">
           <label>Tempo de Operação</label>
+          <p class="context-note">Empresas estáveis há mais tempo demonstram capacidade de sobrevivência em diferentes cenários econômicos.</p>
           <input type="text" id="tempoOperacao" placeholder="Ex: 5 anos e 3 meses">
           <div class="error-message">Este campo é obrigatório</div>
         </div>
 
         <div class="form-group">
           <label>Número Aproximado de Colaboradores</label>
+          <p class="context-note">Estrutura de equipes sinaliza maturidade operacional. Dependência de poucas pessoas é risco de múltiplo.</p>
           <input type="number" id="colaboradores" placeholder="Ex: 25">
           <div class="error-message">Este campo é obrigatório</div>
         </div>
@@ -775,13 +787,14 @@
       <!-- PERFORMANCE FINANCEIRA -->
       <div class="content-section" id="performance">
         <div class="section-header">
-          <div class="section-icon">📊</div>
-          <h2 class="section-title">Performance Financeira</h2>
-          <p class="section-description">Indicadores financeiros de sua empresa.</p>
+          <div class="section-icon">💰</div>
+          <h2 class="section-title">Geração de Caixa & Previsibilidade</h2>
+          <p class="section-description">Caixa é rei. Sem previsibilidade, não há valor para negociar.</p>
         </div>
 
         <div class="form-group">
           <label>Lucro Médio Mensal Aproximado</label>
+          <p class="context-note">O que realmente importa é geração de resultado previsível. Prejuízos contínuos destroem valor rapidamente.</p>
           <div class="radio-options">
             <label class="radio-option">
               <input type="radio" name="lucroMensal" value="Prejuízo">
@@ -809,18 +822,21 @@
 
         <div class="form-group">
           <label>Crescimento Anual da Empresa</label>
+          <p class="context-note">Crescimento consistente sinaliza posicionamento de mercado e potencial de expansão. Crescimento acompanhado de endividamento alto é risco.</p>
           <input type="text" id="crescimento" placeholder="Ex: 15% ao ano">
           <div class="error-message">Este campo é obrigatório</div>
         </div>
 
         <div class="form-group">
           <label>Endividamento Atual</label>
+          <p class="context-note">Dívidas reduzem valor palpável e aumentam risco de insolvência. Estrutura de capital limpa melhora múltiplos.</p>
           <input type="text" id="endividamento" placeholder="Ex: 30% da receita ou baixo/médio/alto">
           <div class="error-message">Este campo é obrigatório</div>
         </div>
 
         <div class="form-group">
           <label>Receita Recorrente</label>
+          <p class="context-note">Receitas recorrentes criam fluxo de caixa previsível. Negócios baseados em projetos únicos são menos valorizados.</p>
           <div class="options-grid">
             <button type="button" class="option-btn" onclick="selectRecurrence(this, 'Sim')">Sim</button>
             <button type="button" class="option-btn" onclick="selectRecurrence(this, 'Parcial')">Parcial</button>
@@ -831,6 +847,7 @@
 
         <div class="form-group">
           <label>Concentração de Clientes</label>
+          <p class="context-note">Carteira concentrada é risco alto. Se 3 clientes representam 80% da receita, um contrato perdido é crítico.</p>
           <input type="text" id="concentracaoClientes" placeholder="Ex: 3 clientes representam 60% ou Bem distribuída">
           <div class="error-message">Este campo é obrigatório</div>
         </div>
@@ -839,9 +856,9 @@
       <!-- MATURIDADE GERENCIAL -->
       <div class="content-section" id="maturidade">
         <div class="section-header">
-          <div class="section-icon">✓</div>
-          <h2 class="section-title">Maturidade Gerencial</h2>
-          <p class="section-description">Marque os itens implementados em sua empresa.</p>
+          <div class="section-icon">⚙️</div>
+          <h2 class="section-title">Profissionalização & Governança</h2>
+          <p class="section-description">Empresas organizadas financeiramente valem consideravelmente mais.</p>
         </div>
 
         <div class="checkbox-options">
@@ -849,56 +866,56 @@
             <input type="checkbox" id="dreGerencial" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>DRE Gerencial Estruturada</strong>
-              <span>Demonstração de Resultado para gestão interna</span>
+              <span>Gestão financeira clara, sem esconder números</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="fluxoCaixa" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>Fluxo de Caixa Projetado</strong>
-              <span>Previsão de entradas e saídas</span>
+              <span>Previsibilidade de entradas e saídas, cenários mapeados</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="indicadores" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>Indicadores e KPIs</strong>
-              <span>Métricas para acompanhamento de performance</span>
+              <span>Métricas de gestão acompanhadas rotineiramente</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="erp" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>ERP Integrado</strong>
-              <span>Sistema de gestão empresarial implementado</span>
+              <span>Sistema central que integra operação e financeiro</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="precificacao" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>Precificação Estruturada</strong>
-              <span>Método sistemático para definir preços</span>
+              <span>Preços baseados em custo real e margem estratégica</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="conselho" onchange="updateMaturityScore()">
             <div class="checkbox-label">
-              <strong>Conselho/Reuniões Gerenciais</strong>
-              <span>Governance e processos decisórios formalizados</span>
+              <strong>Governança Formalizada</strong>
+              <span>Decisões estruturadas, não apenas do sócio-presidente</span>
             </div>
           </label>
           <label class="checkbox-option">
             <input type="checkbox" id="gestaoFinanceira" onchange="updateMaturityScore()">
             <div class="checkbox-label">
               <strong>Gestão Financeira Profissionalizada</strong>
-              <span>Controles e processos financeiros estruturados</span>
+              <span>CFO ou controller dedicado, não apenas contador</span>
             </div>
           </label>
         </div>
 
         <div class="maturity-score-box">
           <div class="score-number" id="maturityPercentage">0%</div>
-          <p>Maturidade Gerencial Implementada</p>
+          <p>Nível de Profissionalização Detectado</p>
         </div>
       </div>
 
@@ -906,8 +923,8 @@
       <div class="content-section" id="contato">
         <div class="section-header">
           <div class="section-icon">👤</div>
-          <h2 class="section-title">Dados de Contato</h2>
-          <p class="section-description">Informações para contato e entrega de resultados.</p>
+          <h2 class="section-title">Seus Dados</h2>
+          <p class="section-description">Informações para enviarmos sua análise estratégica.</p>
         </div>
 
         <div class="form-group">
@@ -936,7 +953,7 @@
 
         <div style="background: rgba(184,148,90,.1); border: 2px solid var(--gold); padding: 24px; border-radius: 8px; margin-top: 30px;">
           <p style="font-size: 0.95rem; line-height: 1.7; color: #333;">
-            <strong style="color: var(--gold);">Próximo Passo:</strong> Após gerar seu diagnóstico, um consultor especializado da D&M entrará em contato em até 24 horas para discutir os resultados e as oportunidades de otimização estratégica para sua empresa.
+            <strong style="color: var(--gold);">O Que Acontece Depois:</strong> Seu diagnóstico é processado por nossa metodologia proprietária. Um consultor especializado da D&M analisará os resultados e entrará em contato em até 24 horas para uma conversa estratégica sem compromisso sobre as alavancas reais de valor da sua empresa.
           </p>
         </div>
       </div>
@@ -944,26 +961,26 @@
       <!-- RESULTADO -->
       <div class="content-section" id="resultado">
         <div class="section-header">
-          <div class="section-icon">🎯</div>
-          <h2 class="section-title">Seu Diagnóstico Preliminar</h2>
+          <div class="section-icon">🔍</div>
+          <h2 class="section-title">Sua Leitura Estratégica</h2>
           <p class="section-description" id="resultDate"></p>
         </div>
 
         <div class="results-container">
           <div class="result-card">
-            <div class="result-label">Faixa Estimada de Valuation</div>
+            <div class="result-label">Faixa de Valuation Estimada</div>
             <div class="result-value" id="valuationRange">R$ 0</div>
-            <div class="result-description">Estimativa preliminar baseada em análise profissional de indicadores financeiros</div>
+            <div class="result-description">Intervalo baseado em análise de geração de caixa, maturidade operacional e riscos identificados</div>
           </div>
 
           <div class="result-card">
-            <div class="result-label">D&M Value Score</div>
+            <div class="result-label">D&M Maturity Score</div>
             <div class="result-value" id="scoreValue">0</div>
-            <div class="result-description">Índice de maturidade, estrutura e potencial de valor da sua empresa (0-100)</div>
+            <div class="result-description">Índice proprietário D&M que mede maturidade financeira, governança, escalabilidade e potencial de valorização (0-100)</div>
           </div>
 
           <div style="margin-top: 30px;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Análise por Dimensão</h3>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Análise Dimensional de Valor</h3>
             <div class="breakdown-grid">
               <div class="breakdown-item">
                 <div class="breakdown-label">Gestão Financeira</div>
@@ -973,7 +990,7 @@
                 <div class="breakdown-value"><span id="value-gestao">0</span>/20</div>
               </div>
               <div class="breakdown-item">
-                <div class="breakdown-label">Governança</div>
+                <div class="breakdown-label">Governança & Decisão</div>
                 <div class="breakdown-bar">
                   <div class="breakdown-fill" id="fill-governanca" style="width: 0%;"></div>
                 </div>
@@ -994,14 +1011,14 @@
                 <div class="breakdown-value"><span id="value-caixa">0</span>/15</div>
               </div>
               <div class="breakdown-item">
-                <div class="breakdown-label">Estrutura Gerencial</div>
+                <div class="breakdown-label">Estrutura Operacional</div>
                 <div class="breakdown-bar">
                   <div class="breakdown-fill" id="fill-estrutura" style="width: 0%;"></div>
                 </div>
                 <div class="breakdown-value"><span id="value-estrutura">0</span>/15</div>
               </div>
               <div class="breakdown-item">
-                <div class="breakdown-label">Dependência Operacional</div>
+                <div class="breakdown-label">Independência Operacional</div>
                 <div class="breakdown-bar">
                   <div class="breakdown-fill" id="fill-dependencia" style="width: 0%;"></div>
                 </div>
@@ -1011,17 +1028,17 @@
           </div>
 
           <div style="margin-top: 30px; padding: 20px; background: var(--white); border-radius: 8px;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Recomendação Estratégica</h3>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Oportunidades de Destravamento de Valor</h3>
             <p style="font-size: 0.95rem; line-height: 1.7; color: #666;" id="recommendationText"></p>
           </div>
         </div>
 
         <div style="background: var(--gray-light); padding: 30px; border-radius: 8px; margin-top: 30px; text-align: center;">
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Quer um Valuation Técnico Completo?</h3>
-          <p style="font-size: 0.95rem; color: #666; margin-bottom: 20px;">Nossa equipe realiza laudos profissionais com análises profundas, fluxo de caixa descontado e diagnóstico estratégico empresarial completo.</p>
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Próximo Passo: Valuation Técnico Completo</h3>
+          <p style="font-size: 0.95rem; color: #666; margin-bottom: 20px;">Este diagnóstico preliminar identifica os pontos-chave. Um valuation técnico completo envolve análise de fluxo de caixa descontado, comparação de múltiplos de mercado e cenários de crescimento. Ideal para vendas, fusões, captação ou clareza sobre valor empresarial real.</p>
           <div class="button-group" style="border-top: none; margin-top: 20px; padding-top: 0;">
-            <button class="btn btn-secondary" onclick="openWhatsApp()">Falar no WhatsApp</button>
-            <button class="btn btn-primary" onclick="openCalendly()">Agendar Reunião</button>
+            <button class="btn btn-secondary" onclick="openWhatsApp()">Conversar no WhatsApp</button>
+            <button class="btn btn-primary" onclick="openCalendly()">Agendar Discussão</button>
           </div>
         </div>
       </div>
@@ -1171,7 +1188,7 @@
     // Atualizar texto do botão
     const nextBtn = document.getElementById('nextBtn');
     if (currentStep === steps.length - 2) {
-      nextBtn.textContent = 'Ver Resultado →';
+      nextBtn.textContent = 'Gerar Diagnóstico →';
     } else {
       nextBtn.textContent = 'Avançar →';
     }
@@ -1278,17 +1295,17 @@
 
     if (formData.lucroMensal === 'Prejuízo') {
       multiplier -= 0.8;
-      negativeFactors.push('Empresa em situação de prejuízo');
+      negativeFactors.push('Situação de prejuízo — prioridade imediata');
     }
 
     if (formData.endividamento.toLowerCase().includes('alto')) {
       multiplier -= 0.3;
-      negativeFactors.push('Endividamento elevado');
+      negativeFactors.push('Endividamento elevado reduz múltiplos');
     }
 
     if (formData.concentracaoClientes.toLowerCase().includes('concentrada')) {
       multiplier -= 0.25;
-      negativeFactors.push('Carteira de clientes concentrada');
+      negativeFactors.push('Risco de concentração de receita');
     }
 
     if (multiplier < 1) multiplier = 1;
@@ -1334,22 +1351,22 @@
 
     const dmValueScore = Math.round((gestaoFinanceira + governanca + escalabilidade + caixa + estrutura + dependencia) / 6);
 
-    // Recomendação
+    // Recomendação estratégica
     let recommendation = '';
     if (dmValueScore < 40) {
-      recommendation = 'Sua empresa apresenta oportunidades significativas de estruturação. Recomendamos iniciar com um diagnóstico profissional de consultoria estratégica para implementar processos fundamentais de gestão financeira e operacional.';
+      recommendation = 'Sua empresa possui oportunidades significativas de estruturação. O primeiro passo estratégico é implementar gestão financeira clara (DRE gerencial, fluxo de caixa), reduzir dependência de sócios e formalizar processos decisórios. Com essas mudanças, o potencial de valorização pode dobrar.';
     } else if (dmValueScore < 60) {
-      recommendation = 'Sua empresa possui potencial considerável de valorização através da profissionalização de processos gerenciais, aprimoramento de controles financeiros e maior previsibilidade operacional.';
+      recommendation = 'Sua empresa demonstra potencial considerável. Recomendamos intensificar a previsibilidade operacional através de controles financeiros mais robustos, melhorar distribuição de clientes e formalizar governança. Essas ações ampliam os múltiplos de negociação.';
     } else if (dmValueScore < 80) {
-      recommendation = 'Sua empresa apresenta uma estrutura sólida. O próximo passo estratégico é intensificar a escalabilidade operacional e reduzir dependências de processos ou pessoas-chave.';
+      recommendation = 'Sua empresa é bem estruturada e preparada para crescimento. O próximo passo é consolidar a escalabilidade — automatizar processos, reduzir dependências-chave e explorar novas linhas de receita. Gestão profissional já implementada é seu diferencial.';
     } else {
-      recommendation = 'Sua empresa é bem estruturada e profissionalizada. O foco deve ser em maximizar a valorização através de estratégia de crescimento alinhada e consolidação de mercado.';
+      recommendation = 'Sua empresa é altamente profissionalizada com forte potencial de mercado. Foco agora em estratégia de crescimento alinhada — expansão geográfica, M&A ou consolidação de liderança. Estrutura e governança já sustentam este nível de ambição.';
     }
 
     // Exibir resultados
     const today = new Date();
     const dateStr = today.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
-    document.getElementById('resultDate').textContent = `Análise realizada em ${dateStr} para ${formData.nomeEmpresa}`;
+    document.getElementById('resultDate').textContent = `Leitura realizada em ${dateStr} para ${formData.nomeEmpresa}`;
     
     document.getElementById('valuationRange').textContent = `${formatCurrency(valuationMin)} a ${formatCurrency(valuationMax)}`;
     document.getElementById('scoreValue').textContent = dmValueScore;
@@ -1392,7 +1409,7 @@
   }
 
   function openWhatsApp() {
-    const text = encodeURIComponent('Olá! Gostaria de saber mais sobre o valuation técnico completo para minha empresa.');
+    const text = encodeURIComponent('Olá! Gostaria de entender melhor meu valuation técnico e as oportunidades de crescimento.');
     window.open(`https://wa.me/5511987654321?text=${text}`, '_blank');
   }
 
