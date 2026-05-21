@@ -744,29 +744,9 @@
         <div class="form-group">
           <label>Faturamento Anual Aproximado</label>
           <p class="context-note">Empresas maiores geralmente desfrutam de múltiplos mais altos, mas só se a operação for profissionalizada.</p>
-          <div class="radio-options">
-            <label class="radio-option">
-              <input type="radio" name="faturamento" value="Até R$ 500 mil">
-              <span class="radio-label">Até R$ 500 mil</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="faturamento" value="R$ 500 mil a R$ 2 milhões">
-              <span class="radio-label">R$ 500 mil a R$ 2 milhões</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="faturamento" value="R$ 2 milhões a R$ 10 milhões">
-              <span class="radio-label">R$ 2 milhões a R$ 10 milhões</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="faturamento" value="R$ 10 milhões a R$ 50 milhões">
-              <span class="radio-label">R$ 10 milhões a R$ 50 milhões</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="faturamento" value="Acima de R$ 50 milhões">
-              <span class="radio-label">Acima de R$ 50 milhões</span>
-            </label>
-          </div>
-          <div class="error-message">Selecione um faturamento</div>
+          <input type="number" id="faturamentoAnual" placeholder="Ex: 2500000" min="0" step="1000">
+          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em R$ (ex: 2500000 para R$ 2,5 milhões)</div>
+          <div class="error-message">Digite um valor de faturamento válido</div>
         </div>
 
         <div class="form-group">
@@ -795,29 +775,9 @@
         <div class="form-group">
           <label>Lucro Médio Mensal Aproximado</label>
           <p class="context-note">O que realmente importa é geração de resultado previsível. Prejuízos contínuos destroem valor rapidamente.</p>
-          <div class="radio-options">
-            <label class="radio-option">
-              <input type="radio" name="lucroMensal" value="Prejuízo">
-              <span class="radio-label">Prejuízo</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="lucroMensal" value="Até R$ 20 mil">
-              <span class="radio-label">Até R$ 20 mil</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="lucroMensal" value="R$ 20 mil a R$ 100 mil">
-              <span class="radio-label">R$ 20 mil a R$ 100 mil</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="lucroMensal" value="R$ 100 mil a R$ 500 mil">
-              <span class="radio-label">R$ 100 mil a R$ 500 mil</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="lucroMensal" value="Acima de R$ 500 mil">
-              <span class="radio-label">Acima de R$ 500 mil</span>
-            </label>
-          </div>
-          <div class="error-message">Selecione uma opção</div>
+          <input type="number" id="lucroMensal" placeholder="Ex: 50000" min="0" step="1000">
+          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em R$ (ex: 50000 para R$ 50 mil). Digite 0 se houver prejuízo.</div>
+          <div class="error-message">Digite um valor de lucro válido</div>
         </div>
 
         <div class="form-group">
@@ -1099,9 +1059,9 @@
     if (step === 'inicio') return true;
     
     if (step === 'empresa') {
-      isValid = validateField('nomeEmpresa') && segmentSelected && validateField('faturamento', 'radio') && validateField('tempoOperacao') && validateField('colaboradores');
+      isValid = validateField('nomeEmpresa') && segmentSelected && validateField('faturamentoAnual') && validateField('tempoOperacao') && validateField('colaboradores');
     } else if (step === 'performance') {
-      isValid = validateField('lucroMensal', 'radio') && validateField('crescimento') && validateField('endividamento') && recurrenceSelected && validateField('concentracaoClientes');
+      isValid = validateField('lucroMensal') && validateField('crescimento') && validateField('endividamento') && recurrenceSelected && validateField('concentracaoClientes');
     } else if (step === 'contato') {
       isValid = validateField('nomeResponsavel') && validateField('whatsapp') && validateField('email') && validateField('cidadeEstado');
     }
@@ -1133,11 +1093,11 @@
     if (step === 'empresa') {
       formData.nomeEmpresa = document.getElementById('nomeEmpresa').value;
       formData.segmento = segmentSelected;
-      formData.faturamento = document.querySelector('input[name="faturamento"]:checked')?.value;
+      formData.faturamentoAnual = parseFloat(document.getElementById('faturamentoAnual').value) || 0;
       formData.tempoOperacao = document.getElementById('tempoOperacao').value;
       formData.colaboradores = document.getElementById('colaboradores').value;
     } else if (step === 'performance') {
-      formData.lucroMensal = document.querySelector('input[name="lucroMensal"]:checked')?.value;
+      formData.lucroMensal = parseFloat(document.getElementById('lucroMensal').value) || 0;
       formData.crescimento = document.getElementById('crescimento').value;
       formData.endividamento = document.getElementById('endividamento').value;
       formData.receitaRecorrente = recurrenceSelected;
@@ -1224,26 +1184,12 @@
   }
 
   function calculateAndShowResults() {
-    const lucroMensalMap = {
-      'Prejuízo': 0,
-      'Até R$ 20 mil': 10000,
-      'R$ 20 mil a R$ 100 mil': 60000,
-      'R$ 100 mil a R$ 500 mil': 300000,
-      'Acima de R$ 500 mil': 750000,
-    };
-
-    const faturamentoMap = {
-      'Até R$ 500 mil': 250000,
-      'R$ 500 mil a R$ 2 milhões': 1250000,
-      'R$ 2 milhões a R$ 10 milhões': 6000000,
-      'R$ 10 milhões a R$ 50 milhões': 30000000,
-      'Acima de R$ 50 milhões': 75000000,
-    };
-
-    const lucroMensal = lucroMensalMap[formData.lucroMensal] || 0;
+    // Usar valores reais digitados pelo usuário
+    const lucroMensal = formData.lucroMensal;
     const lucroAnual = lucroMensal * 12;
-    const faturamentoEstimado = faturamentoMap[formData.faturamento] || 1000000;
+    const faturamentoEstimado = formData.faturamentoAnual;
 
+    // Determinar classe de tamanho com base em faturamento real
     let sizeClass = 'pequena';
     if (faturamentoEstimado >= 10000000) sizeClass = 'estruturada';
     else if (faturamentoEstimado >= 2000000) sizeClass = 'media';
@@ -1293,19 +1239,19 @@
       positiveFactors.push('Sistemas integrados de gestão');
     }
 
-    if (formData.lucroMensal === 'Prejuízo') {
+    if (lucroMensal === 0) {
       multiplier -= 0.8;
-      negativeFactors.push('Situação de prejuízo — prioridade imediata');
+      negativeFactors.push('Empresa em situação de prejuízo ou sem lucro');
     }
 
     if (formData.endividamento.toLowerCase().includes('alto')) {
       multiplier -= 0.3;
-      negativeFactors.push('Endividamento elevado reduz múltiplos');
+      negativeFactors.push('Endividamento elevado');
     }
 
     if (formData.concentracaoClientes.toLowerCase().includes('concentrada')) {
       multiplier -= 0.25;
-      negativeFactors.push('Risco de concentração de receita');
+      negativeFactors.push('Carteira de clientes concentrada');
     }
 
     if (multiplier < 1) multiplier = 1;
