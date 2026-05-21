@@ -3,554 +3,530 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diagnóstico de Valor Empresarial - D&M Consultoria Financeira</title>
+  <title>Calculadora de Valuation - D&M Consultoria Financeira</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; font-size: 16px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
 
     :root {
       --dark: #0a0e0b;
-      --verde: #082c20;
-      --verde2: #0c3525;
-      --gold: #b8945a;
-      --off: #f5f3ee;
+      --dark-secondary: #1a1f1c;
+      --verde: #0d3d2e;
+      --verde-light: #1a5f47;
+      --gold: #c9a76f;
+      --gold-light: #e8dcc8;
+      --off-white: #f9f8f5;
       --white: #ffffff;
-      --mid: #8a8880;
-      --light: #e8e5de;
-      --gray-light: #f0f0f0;
-      --gray-medium: #d0d0d0;
+      --text-primary: #1a1f1c;
+      --text-secondary: #6b7370;
+      --border: #e0dcd8;
+      --success: #2d9d78;
+      --warning: #d4a574;
+      --error: #c85a54;
     }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--white);
-      color: var(--dark);
-      overflow-x: hidden;
+      background: var(--off-white);
+      color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 320px 1fr;
       min-height: 100vh;
     }
 
     /* ===== SIDEBAR ===== */
     .sidebar {
-      background: linear-gradient(135deg, var(--dark) 0%, var(--verde) 100%);
+      background: linear-gradient(180deg, var(--dark) 0%, var(--verde) 100%);
       padding: 40px 0;
-      border-right: 1px solid rgba(255,255,255,.1);
       position: sticky;
       top: 0;
       height: 100vh;
       overflow-y: auto;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
     }
 
-    .sidebar-logo {
-      padding: 0 30px;
-      margin-bottom: 50px;
-      border-bottom: 1px solid rgba(255,255,255,.1);
-      padding-bottom: 30px;
+    .sidebar-header {
+      padding: 0 30px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 40px;
     }
 
-    .sidebar-logo h1 {
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 20px;
+    }
+
+    .logo-text h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 400;
+      font-size: 1.1rem;
+      font-weight: 600;
       color: var(--white);
       line-height: 1.3;
     }
 
+    .logo-text p {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .progress-sidebar {
+      padding: 0 30px;
+    }
+
+    .progress-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #e8dcc8);
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 2px;
+    }
+
     .sidebar-menu {
       list-style: none;
+      margin-top: 40px;
     }
 
     .menu-section {
-      padding: 0;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
 
     .menu-section-title {
       font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.5);
+      color: rgba(255, 255, 255, 0.5);
       padding: 0 30px;
-      margin-bottom: 12px;
-      display: block;
+      margin-bottom: 16px;
     }
 
     .menu-item {
+      padding: 14px 30px;
+      color: rgba(255, 255, 255, 0.65);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-left: 3px solid transparent;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 30px;
-      color: rgba(255,255,255,.6);
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.95rem;
-      border-left: 3px solid transparent;
     }
 
     .menu-item:hover {
       color: var(--white);
-      background: rgba(255,255,255,.05);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .menu-item.active {
       color: var(--gold);
       border-left-color: var(--gold);
-      background: rgba(184,148,90,.1);
-    }
-
-    .menu-item.locked {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
+      background: rgba(201, 167, 111, 0.1);
     }
 
     .menu-icon {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* ===== MAIN CONTENT ===== */
     .main-content {
-      background: var(--white);
-      padding: 0;
+      background: var(--off-white);
       display: flex;
       flex-direction: column;
     }
 
-    .progress-section {
-      background: var(--gray-light);
+    .content-header {
+      background: var(--white);
       padding: 30px 50px;
-      border-bottom: 1px solid var(--gray-medium);
+      border-bottom: 1px solid var(--border);
     }
 
-    .progress-wrapper {
-      max-width: 100%;
-    }
-
-    .progress-label {
-      font-size: 0.8rem;
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
       font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
+      color: var(--text-primary);
+      margin-bottom: 8px;
     }
 
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--gray-medium);
-      border-radius: 4px;
-      overflow: hidden;
+    .header-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      font-weight: 400;
     }
 
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), #c9a76f);
-      transition: width 0.6s ease;
-      border-radius: 4px;
-    }
-
-    .content-area {
+    .content-wrapper {
       flex: 1;
-      padding: 50px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 40px;
+      padding: 40px 50px;
       overflow-y: auto;
     }
 
-    .content-section {
-      display: none;
-      animation: fadeIn 0.4s ease-out;
-      max-width: 900px;
-    }
-
-    .content-section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .form-panel {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .section-header {
-      margin-bottom: 40px;
-    }
-
-    .section-icon {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
+      margin-bottom: 35px;
     }
 
     .section-title {
       font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      font-weight: 400;
-      color: var(--dark);
-      margin-bottom: 15px;
-      line-height: 1.2;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
     }
 
     .section-description {
-      font-size: 1rem;
-      line-height: 1.7;
-      color: #666;
-      max-width: 600px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
     }
 
+    /* ===== FORM FIELDS ===== */
     .form-group {
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     }
 
-    .form-group label {
+    .form-label {
       display: block;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 12px;
-      letter-spacing: 0.02em;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
     }
 
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group input[type="tel"],
-    .form-group input[type="number"] {
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      font-weight: 400;
+    }
+
+    .form-input {
       width: 100%;
-      max-width: 500px;
       padding: 12px 16px;
-      border: 1px solid var(--gray-medium);
-      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
       font-family: 'Inter', sans-serif;
-      font-size: 1rem;
-      transition: all 0.3s;
+      font-size: 0.95rem;
+      color: var(--text-primary);
       background: var(--white);
+      transition: all 0.3s ease;
     }
 
-    .form-group input:focus {
+    .form-input:focus {
       outline: none;
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(184,148,90,.1);
+      box-shadow: 0 0 0 3px rgba(201, 167, 111, 0.1);
     }
 
-    .form-group input::placeholder {
-      color: #999;
+    .form-input::placeholder {
+      color: var(--text-secondary);
     }
 
-    .error-message {
-      font-size: 0.85rem;
-      color: #e74c3c;
-      margin-top: 6px;
-      display: none;
-    }
-
-    .form-group.error input {
-      border-color: #e74c3c;
-    }
-
-    .form-group.error .error-message {
-      display: block;
-    }
-
-    /* Options Grid */
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
       gap: 12px;
-      max-width: 800px;
     }
 
-    .option-btn {
-      padding: 14px 16px;
-      border: 2px solid var(--gray-medium);
+    .toggle-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
       background: var(--white);
-      color: var(--dark);
+      color: var(--text-primary);
       cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      border-radius: 6px;
-      transition: all 0.3s;
-      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
     }
 
-    .option-btn:hover {
+    .toggle-btn.active {
       border-color: var(--gold);
+      background: rgba(201, 167, 111, 0.08);
       color: var(--gold);
     }
 
-    .option-btn.active {
-      border-color: var(--gold);
-      background: rgba(184,148,90,.1);
-      color: var(--gold);
+    .toggle-btn:hover:not(.active) {
+      border-color: var(--text-secondary);
     }
 
-    /* Radio/Checkbox */
-    .radio-options,
-    .checkbox-options {
+    /* Radio Options */
+    .radio-options {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-width: 600px;
+      gap: 10px;
     }
 
-    .radio-option,
-    .checkbox-option {
+    .radio-option {
       display: flex;
-      align-items: flex-start;
-      padding: 16px;
-      border: 2px solid var(--gray-medium);
-      background: var(--white);
-      border-radius: 6px;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
+      background: var(--white);
     }
 
-    .radio-option:hover,
-    .checkbox-option:hover {
+    .radio-option:hover {
       border-color: var(--gold);
-      background: rgba(184,148,90,.05);
+      background: rgba(201, 167, 111, 0.04);
     }
 
-    .radio-option input[type="radio"],
-    .checkbox-option input[type="checkbox"] {
+    .radio-option input[type="radio"] {
       margin-right: 12px;
       cursor: pointer;
       accent-color: var(--gold);
-      margin-top: 4px;
-      flex-shrink: 0;
     }
 
-    .radio-label,
-    .checkbox-label {
+    .radio-label {
+      font-size: 0.9rem;
+      color: var(--text-primary);
       cursor: pointer;
-      flex: 1;
+      font-weight: 500;
     }
 
-    .checkbox-label strong {
-      display: block;
-      color: var(--dark);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .checkbox-label span {
-      display: block;
-      font-size: 0.85rem;
-      color: #999;
-    }
-
-    /* Image section */
-    .content-with-image {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 50px;
-      align-items: center;
-    }
-
-    .content-image {
+    /* Range Slider */
+    .range-slider {
       width: 100%;
-      height: 400px;
-      background: linear-gradient(135deg, var(--verde) 0%, var(--gold) 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      font-size: 5rem;
+      cursor: pointer;
+      accent-color: var(--gold);
     }
 
-    /* Results Section */
-    .results-container {
-      background: var(--gray-light);
-      padding: 40px;
-      border-radius: 12px;
-      margin-top: 30px;
+    .range-value {
+      display: inline-block;
+      margin-left: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 0.95rem;
     }
 
-    .result-card {
+    /* Advanced Fields */
+    .advanced-section {
+      display: none;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      margin-top: 28px;
+    }
+
+    .advanced-section.show {
+      display: block;
+    }
+
+    /* ===== RESULT PANEL ===== */
+    .result-panel {
       background: var(--white);
+      border-radius: 12px;
       padding: 30px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      border-left: 4px solid var(--gold);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 40px;
+      height: fit-content;
+    }
+
+    .result-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .result-item {
+      margin-bottom: 28px;
     }
 
     .result-label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #999;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      color: var(--text-secondary);
       margin-bottom: 8px;
     }
 
     .result-value {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 400;
+      font-size: 1.8rem;
+      font-weight: 600;
       color: var(--gold);
+      line-height: 1.2;
+    }
+
+    .result-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .score-box {
+      background: linear-gradient(135deg, rgba(201, 167, 111, 0.08), rgba(13, 61, 46, 0.05));
+      border: 1.5px solid var(--gold);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .score-box .result-value {
+      font-size: 2.4rem;
       margin-bottom: 8px;
     }
 
-    .result-description {
-      font-size: 0.9rem;
-      color: #666;
+    .score-box .result-label {
+      margin-bottom: 4px;
     }
 
-    /* Breakdown Grid */
-    .breakdown-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
+    .insight-box {
+      background: rgba(45, 157, 120, 0.06);
+      border-left: 3px solid var(--success);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 20px;
     }
 
-    .breakdown-item {
-      background: var(--white);
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    .breakdown-label {
+    .insight-text {
       font-size: 0.85rem;
-      font-weight: 600;
-      color: #999;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      line-height: 1.5;
     }
 
-    .breakdown-bar {
-      width: 100%;
-      height: 6px;
-      background: var(--gray-medium);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    .breakdown-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), #c9a76f);
-      border-radius: 3px;
-      transition: width 1s ease-out 0.3s;
-    }
-
-    .breakdown-value {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--gold);
-    }
-
-    /* Buttons */
+    /* ===== BUTTONS ===== */
     .button-group {
       display: flex;
-      gap: 16px;
-      margin-top: 50px;
-      padding-top: 30px;
-      border-top: 1px solid var(--gray-medium);
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
     }
 
     .btn {
-      padding: 14px 32px;
-      font-size: 0.95rem;
+      flex: 1;
+      padding: 14px 20px;
+      font-size: 0.9rem;
       font-weight: 600;
-      letter-spacing: 0.05em;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-secondary {
-      background: var(--gray-light);
-      color: var(--dark);
-      border: 2px solid var(--gray-medium);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--dark);
-      background: var(--white);
+      transition: all 0.3s ease;
+      text-align: center;
+      letter-spacing: 0.4px;
     }
 
     .btn-primary {
       background: var(--gold);
       color: var(--dark);
-      margin-left: auto;
     }
 
     .btn-primary:hover {
-      background: #c9a76f;
+      background: #b8945a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(201, 167, 111, 0.3);
     }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1.5px solid var(--border);
     }
 
-    /* Maturity Score */
-    .maturity-score-box {
-      background: rgba(184,148,90,.1);
-      border: 2px solid var(--gold);
-      padding: 24px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .maturity-score-box .score-number {
-      font-family: 'Playfair Display', serif;
-      font-size: 3rem;
-      font-weight: 400;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-
-    .maturity-score-box p {
-      font-size: 0.9rem;
-      color: #666;
-    }
-
-    .context-note {
-      font-size: 0.85rem;
-      color: #999;
-      font-style: italic;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--light);
+    .btn-secondary:hover {
+      border-color: var(--text-primary);
+      background: var(--off-white);
     }
 
     /* ===== RESPONSIVE ===== */
+    @media (max-width: 1280px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .result-panel {
+        position: static;
+        top: auto;
+      }
+    }
+
     @media (max-width: 1024px) {
       .container {
         grid-template-columns: 280px 1fr;
       }
 
-      .content-with-image {
-        grid-template-columns: 1fr;
-      }
-
-      .content-image {
-        height: 250px;
-      }
-
-      .content-area {
+      .form-panel {
         padding: 30px;
+      }
+
+      .content-wrapper {
+        padding: 30px;
+        gap: 20px;
       }
     }
 
@@ -561,55 +537,51 @@
 
       .sidebar {
         position: fixed;
-        left: -300px;
+        left: -320px;
         top: 0;
-        height: 100vh;
         z-index: 1000;
-        transition: left 0.3s;
+        width: 320px;
+        transition: left 0.3s ease;
       }
 
       .sidebar.open {
         left: 0;
       }
 
-      .content-area {
+      .content-wrapper {
         padding: 20px;
-      }
-
-      .section-title {
-        font-size: 1.6rem;
-      }
-
-      .options-grid {
         grid-template-columns: 1fr;
       }
 
-      .button-group {
-        flex-direction: column;
+      .form-panel {
+        padding: 20px;
       }
 
-      .btn-primary {
-        margin-left: 0;
+      .content-header {
+        padding: 20px;
+      }
+
+      .header-title {
+        font-size: 1.4rem;
       }
     }
 
-    /* Scrollbar */
-    .sidebar::-webkit-scrollbar,
-    .content-area::-webkit-scrollbar {
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
       width: 6px;
     }
 
-    .sidebar::-webkit-scrollbar-track {
-      background: rgba(255,255,255,.05);
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
 
-    .sidebar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,.2);
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
       border-radius: 3px;
     }
 
-    .sidebar::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,.3);
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
     }
   </style>
 </head>
@@ -617,810 +589,446 @@
 
 <div class="container">
   <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <h1>Diagnóstico de Valor</h1>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">D</div>
+        <div class="logo-text">
+          <h1>D&M</h1>
+          <p>Consultoria</p>
+        </div>
+      </div>
+      <div class="progress-sidebar">
+        <div class="progress-label">Progresso</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
     </div>
 
     <ul class="sidebar-menu">
-      <!-- Seção 1: Início -->
       <li class="menu-section">
         <span class="menu-section-title">1. Contexto</span>
-        <div class="menu-item active" onclick="goToStep('inicio')" data-step="inicio">
+        <div class="menu-item active" onclick="navigateTo('inicio')" data-section="inicio">
           <span class="menu-icon">📊</span>
-          <span>O Que Realmente Importa</span>
+          <span>Motivo da Avaliação</span>
         </div>
       </li>
 
-      <!-- Seção 2: Financeiro -->
       <li class="menu-section">
-        <span class="menu-section-title">2. Empresa</span>
-        <div class="menu-item" onclick="goToStep('empresa')" data-step="empresa">
-          <span class="menu-icon">🏢</span>
-          <span>Estrutura & Operação</span>
-        </div>
-        <div class="menu-item" onclick="goToStep('performance')" data-step="performance">
+        <span class="menu-section-title">2. Financeiro</span>
+        <div class="menu-item" onclick="navigateTo('financeiro')" data-section="financeiro">
           <span class="menu-icon">💰</span>
-          <span>Geração de Caixa</span>
+          <span>Dados Financeiros</span>
         </div>
       </li>
 
-      <!-- Seção 3: Informações -->
       <li class="menu-section">
-        <span class="menu-section-title">3. Gestão</span>
-        <div class="menu-item" onclick="goToStep('maturidade')" data-step="maturidade">
-          <span class="menu-icon">⚙️</span>
-          <span>Profissionalização</span>
+        <span class="menu-section-title">3. Empresa</span>
+        <div class="menu-item" onclick="navigateTo('empresa')" data-section="empresa">
+          <span class="menu-icon">🏢</span>
+          <span>Sobre a Empresa</span>
         </div>
-        <div class="menu-item" onclick="goToStep('contato')" data-step="contato">
+      </li>
+
+      <li class="menu-section">
+        <span class="menu-section-title">4. Contato</span>
+        <div class="menu-item" onclick="navigateTo('contato')" data-section="contato">
           <span class="menu-icon">👤</span>
           <span>Seus Dados</span>
         </div>
       </li>
-
-      <!-- Seção 4: Resultados -->
-      <li class="menu-section">
-        <span class="menu-section-title">4. Análise</span>
-        <div class="menu-item locked" onclick="goToStep('resultado')" data-step="resultado">
-          <span class="menu-icon">🔍</span>
-          <span>Leitura Estratégica</span>
-        </div>
-      </li>
     </ul>
-  </div>
+  </aside>
 
   <!-- MAIN CONTENT -->
-  <div class="main-content">
-    <!-- Progress Bar -->
-    <div class="progress-section">
-      <div class="progress-wrapper">
-        <div class="progress-label">
-          <span>Progresso do Diagnóstico</span>
-          <span id="progressPercent">0%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
-        </div>
-      </div>
+  <main class="main-content">
+    <div class="content-header">
+      <h1 class="header-title">Calculadora de Valuation</h1>
+      <p class="header-subtitle">Descubra o valor estratégico da sua empresa em minutos</p>
     </div>
 
-    <!-- Content Area -->
-    <div class="content-area">
-
-      <!-- INÍCIO -->
-      <div class="content-section active" id="inicio">
-        <div class="section-header">
-          <div class="section-icon">📊</div>
-          <h2 class="section-title">O Que Realmente Aumenta ou Destrói Valor</h2>
-          <p class="section-description">Um diagnóstico estratégico sobre a verdadeira maturidade do seu negócio.</p>
-        </div>
-
-        <div class="content-with-image">
-          <div>
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Por Que Faturamento Não é Valuation</h3>
-            <p style="font-size: 1rem; line-height: 1.8; color: #666; margin-bottom: 20px;">
-              Muitas empresas crescem aumentando risco operacional, não valor. Lucro sem previsibilidade de caixa não sustenta crescimento. Dependência de sócios ou poucos clientes reduz múltiplos de negociação drasticamente.
-            </p>
-            <p style="font-size: 1rem; line-height: 1.8; color: #666; margin-bottom: 20px;">
-              Este diagnóstico analisa os <strong>fatores reais que aumentam valor</strong>: maturidade gerencial, estrutura financeira, previsibilidade operacional, geração consistente de caixa e independência de pessoas-chave. Não é uma calculadora automática — é uma <strong>leitura estratégica</strong> sobre o potencial de negociação da sua empresa.
-            </p>
-            <p style="font-size: 0.9rem; color: #999; font-style: italic;">
-              Leva aproximadamente <strong>5-10 minutos</strong>. Resultado confidencial, direto ao seu e-mail.
-            </p>
-          </div>
-          <div class="content-image">💼</div>
-        </div>
-      </div>
-
-      <!-- PERFIL DA EMPRESA -->
-      <div class="content-section" id="empresa">
-        <div class="section-header">
-          <div class="section-icon">🏢</div>
-          <h2 class="section-title">Estrutura & Operação</h2>
-          <p class="section-description">Tamanho, segmento e tempo de consolidação importam na avaliação de risco.</p>
-        </div>
-
-        <div class="form-group">
-          <label>Nome da Empresa</label>
-          <input type="text" id="nomeEmpresa" placeholder="Ex: Tech Solutions Brasil">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Segmento de Atuação</label>
-          <div class="options-grid">
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Consultoria')">Consultoria</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Tecnologia')">Tecnologia</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Comércio')">Comércio</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Indústria')">Indústria</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Saúde')">Saúde</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Educação')">Educação</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Serviços')">Serviços</button>
-            <button type="button" class="option-btn" onclick="selectSegment(this, 'Outro')">Outro</button>
-          </div>
-          <div class="error-message">Selecione um segmento</div>
-        </div>
-
-        <div class="form-group" id="outroSegmentoField" style="display: none;">
-          <label>Qual é o Segmento?</label>
-          <input type="text" id="outroSegmento" placeholder="Ex: Consultoria de RH, Distribuição, Manufatura">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Faturamento Anual Aproximado</label>
-          <p class="context-note">Empresas maiores geralmente desfrutam de múltiplos mais altos, mas só se a operação for profissionalizada.</p>
-          <input type="text" id="faturamentoAnual" placeholder="Ex: R$ 2.500.000,00" inputmode="numeric">
-          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em reais (ex: 2500000 ou com separadores)</div>
-          <div class="error-message">Digite um valor de faturamento válido</div>
-        </div>
-
-        <div class="form-group">
-          <label>Tempo de Operação</label>
-          <p class="context-note">Empresas estáveis há mais tempo demonstram capacidade de sobrevivência em diferentes cenários econômicos.</p>
-          <input type="text" id="tempoOperacao" placeholder="Ex: 5 anos e 3 meses">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Número Aproximado de Colaboradores</label>
-          <p class="context-note">Estrutura de equipes sinaliza maturidade operacional. Dependência de poucas pessoas é risco de múltiplo.</p>
-          <input type="number" id="colaboradores" placeholder="Ex: 25">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-      </div>
-
-      <!-- PERFORMANCE FINANCEIRA -->
-      <div class="content-section" id="performance">
-        <div class="section-header">
-          <div class="section-icon">💰</div>
-          <h2 class="section-title">Geração de Caixa & Previsibilidade</h2>
-          <p class="section-description">Caixa é rei. Sem previsibilidade, não há valor para negociar.</p>
-        </div>
-
-        <div class="form-group">
-          <label>Lucro Médio Mensal Aproximado</label>
-          <p class="context-note">O que realmente importa é geração de resultado previsível. Prejuízos contínuos destroem valor rapidamente.</p>
-          <input type="text" id="lucroMensal" placeholder="Ex: R$ 50.000,00" inputmode="numeric">
-          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em reais (ex: 50000 ou com separadores). Digite 0 se houver prejuízo.</div>
-          <div class="error-message">Digite um valor de lucro válido</div>
-        </div>
-
-        <div class="form-group">
-          <label>Crescimento Anual da Empresa</label>
-          <p class="context-note">Crescimento consistente sinaliza posicionamento de mercado e potencial de expansão. Crescimento acompanhado de endividamento alto é risco.</p>
-          <input type="text" id="crescimento" placeholder="Ex: 15% ao ano">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Endividamento Atual</label>
-          <p class="context-note">Dívidas reduzem valor palpável e aumentam risco de insolvência. Estrutura de capital limpa melhora múltiplos.</p>
-          <input type="text" id="endividamento" placeholder="Ex: 30% da receita ou baixo/médio/alto">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Receita Recorrente</label>
-          <p class="context-note">Receitas recorrentes criam fluxo de caixa previsível. Negócios baseados em projetos únicos são menos valorizados.</p>
-          <div class="options-grid">
-            <button type="button" class="option-btn" onclick="selectRecurrence(this, 'Sim')">Sim</button>
-            <button type="button" class="option-btn" onclick="selectRecurrence(this, 'Parcial')">Parcial</button>
-            <button type="button" class="option-btn" onclick="selectRecurrence(this, 'Não')">Não</button>
-          </div>
-          <div class="error-message">Selecione uma opção</div>
-        </div>
-
-        <div class="form-group">
-          <label>Concentração de Clientes</label>
-          <p class="context-note">Carteira concentrada é risco alto. Se 3 clientes representam 80% da receita, um contrato perdido é crítico.</p>
-          <input type="text" id="concentracaoClientes" placeholder="Ex: 3 clientes representam 60% ou Bem distribuída">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-      </div>
-
-      <!-- MATURIDADE GERENCIAL -->
-      <div class="content-section" id="maturidade">
-        <div class="section-header">
-          <div class="section-icon">⚙️</div>
-          <h2 class="section-title">Profissionalização & Governança</h2>
-          <p class="section-description">Empresas organizadas financeiramente valem consideravelmente mais.</p>
-        </div>
-
-        <div class="checkbox-options">
-          <label class="checkbox-option">
-            <input type="checkbox" id="dreGerencial" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>DRE Gerencial Estruturada</strong>
-              <span>Gestão financeira clara, sem esconder números</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="fluxoCaixa" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>Fluxo de Caixa Projetado</strong>
-              <span>Previsibilidade de entradas e saídas, cenários mapeados</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="indicadores" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>Indicadores e KPIs</strong>
-              <span>Métricas de gestão acompanhadas rotineiramente</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="erp" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>ERP Integrado</strong>
-              <span>Sistema central que integra operação e financeiro</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="precificacao" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>Precificação Estruturada</strong>
-              <span>Preços baseados em custo real e margem estratégica</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="conselho" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>Governança Formalizada</strong>
-              <span>Decisões estruturadas, não apenas do sócio-presidente</span>
-            </div>
-          </label>
-          <label class="checkbox-option">
-            <input type="checkbox" id="gestaoFinanceira" onchange="updateMaturityScore()">
-            <div class="checkbox-label">
-              <strong>Gestão Financeira Profissionalizada</strong>
-              <span>CFO ou controller dedicado, não apenas contador</span>
-            </div>
-          </label>
-        </div>
-
-        <div class="maturity-score-box">
-          <div class="score-number" id="maturityPercentage">0%</div>
-          <p>Nível de Profissionalização Detectado</p>
-        </div>
-      </div>
-
-      <!-- DADOS DE CONTATO -->
-      <div class="content-section" id="contato">
-        <div class="section-header">
-          <div class="section-icon">👤</div>
-          <h2 class="section-title">Seus Dados</h2>
-          <p class="section-description">Informações para enviarmos sua análise estratégica.</p>
-        </div>
-
-        <div class="form-group">
-          <label>Nome do Responsável</label>
-          <input type="text" id="nomeResponsavel" placeholder="Seu nome completo">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>WhatsApp</label>
-          <input type="tel" id="whatsapp" placeholder="(XX) 9XXXX-XXXX">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>E-mail</label>
-          <input type="email" id="email" placeholder="seu@email.com">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div class="form-group">
-          <label>Cidade/Estado</label>
-          <input type="text" id="cidadeEstado" placeholder="Ex: São Paulo, SP">
-          <div class="error-message">Este campo é obrigatório</div>
-        </div>
-
-        <div style="background: rgba(184,148,90,.1); border: 2px solid var(--gold); padding: 24px; border-radius: 8px; margin-top: 30px;">
-          <p style="font-size: 0.95rem; line-height: 1.7; color: #333;">
-            <strong style="color: var(--gold);">O Que Acontece Depois:</strong> Seu diagnóstico é processado por nossa metodologia proprietária. Um consultor especializado da D&M analisará os resultados e entrará em contato em até 24 horas para uma conversa estratégica sem compromisso sobre as alavancas reais de valor da sua empresa.
-          </p>
-        </div>
-      </div>
-
-      <!-- RESULTADO -->
-      <div class="content-section" id="resultado">
-        <div class="section-header">
-          <div class="section-icon">🔍</div>
-          <h2 class="section-title">Sua Leitura Estratégica</h2>
-          <p class="section-description" id="resultDate"></p>
-        </div>
-
-        <div class="results-container">
-          <div class="result-card">
-            <div class="result-label">Faixa de Valuation Estimada</div>
-            <div class="result-value" id="valuationRange">R$ 0</div>
-            <div class="result-description">Intervalo baseado em análise de geração de caixa, maturidade operacional e riscos identificados</div>
+    <div class="content-wrapper">
+      <!-- FORM SECTION -->
+      <div>
+        <!-- SEÇÃO: MOTIVO DA AVALIAÇÃO -->
+        <div class="form-panel" id="inicio-section">
+          <div class="section-header">
+            <h2 class="section-title">Por Que Avaliar?</h2>
+            <p class="section-description">Qual é o objetivo desta avaliação?</p>
           </div>
 
-          <div class="result-card">
-            <div class="result-label">D&M Maturity Score</div>
-            <div class="result-value" id="scoreValue">0</div>
-            <div class="result-description">Índice proprietário D&M que mede maturidade financeira, governança, escalabilidade e potencial de valorização (0-100)</div>
+          <div class="form-group">
+            <div class="radio-options">
+              <label class="radio-option">
+                <input type="radio" name="motivo" value="vender" onchange="updateResults()">
+                <span class="radio-label"><strong>Vender Totalmente</strong></span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="motivo" value="vender-parcial" onchange="updateResults()">
+                <span class="radio-label"><strong>Vender Parcialmente</strong></span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="motivo" value="investimento" onchange="updateResults()">
+                <span class="radio-label"><strong>Captar Investimento</strong></span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="motivo" value="governanca" onchange="updateResults()">
+                <span class="radio-label"><strong>Governança Interna</strong></span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="motivo" value="outro" onchange="updateResults()">
+                <span class="radio-label"><strong>Outro</strong></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: DADOS FINANCEIROS -->
+        <div class="form-panel" id="financeiro-section" style="display: none;">
+          <div class="section-header">
+            <h2 class="section-title">Dados Financeiros</h2>
+            <p class="section-description">Informações básicas do seu negócio</p>
           </div>
 
-          <div style="margin-top: 30px;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 20px; font-weight: 400;">Análise Dimensional de Valor</h3>
-            <div class="breakdown-grid">
-              <div class="breakdown-item">
-                <div class="breakdown-label">Gestão Financeira</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-gestao" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-gestao">0</span>/20</div>
+          <div class="form-group">
+            <div class="toggle-group">
+              <button class="toggle-btn active" onclick="setMode('simples')">Modo Simples</button>
+              <button class="toggle-btn" onclick="setMode('avancado')">Modo Avançado</button>
+            </div>
+          </div>
+
+          <!-- MODO SIMPLES -->
+          <div id="modo-simples">
+            <div class="form-group">
+              <label class="form-label">Faturamento Anual</label>
+              <input type="text" class="form-input" id="faturamento" placeholder="R$ 0,00" onchange="updateResults()" oninput="formatCurrency(this)">
+              <div class="form-hint">Receita bruta anual aproximada</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Lucro Líquido Anual</label>
+              <input type="text" class="form-input" id="lucro" placeholder="R$ 0,00" onchange="updateResults()" oninput="formatCurrency(this)">
+              <div class="form-hint">Resultado líquido (lucro ou prejuízo)</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Crescimento Anual</label>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" class="range-slider" id="crescimento" min="-20" max="100" value="0" onchange="updateResults()">
+                <span class="range-value" id="crescimento-value">0%</span>
               </div>
-              <div class="breakdown-item">
-                <div class="breakdown-label">Governança & Decisão</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-governanca" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-governanca">0</span>/15</div>
+              <div class="form-hint">Taxa de crescimento YoY</div>
+            </div>
+          </div>
+
+          <!-- MODO AVANÇADO (OCULTO) -->
+          <div class="advanced-section" id="modo-avancado">
+            <div class="form-group">
+              <label class="form-label">EBITDA Anual</label>
+              <input type="text" class="form-input" id="ebitda" placeholder="R$ 0,00" onchange="updateResults()" oninput="formatCurrency(this)">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Margem Bruta (%)</label>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" class="range-slider" id="margem-bruta" min="0" max="100" value="50" onchange="updateResults()">
+                <span class="range-value" id="margem-bruta-value">50%</span>
               </div>
-              <div class="breakdown-item">
-                <div class="breakdown-label">Escalabilidade</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-escalabilidade" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-escalabilidade">0</span>/15</div>
-              </div>
-              <div class="breakdown-item">
-                <div class="breakdown-label">Geração de Caixa</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-caixa" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-caixa">0</span>/15</div>
-              </div>
-              <div class="breakdown-item">
-                <div class="breakdown-label">Estrutura Operacional</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-estrutura" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-estrutura">0</span>/15</div>
-              </div>
-              <div class="breakdown-item">
-                <div class="breakdown-label">Independência Operacional</div>
-                <div class="breakdown-bar">
-                  <div class="breakdown-fill" id="fill-dependencia" style="width: 0%;"></div>
-                </div>
-                <div class="breakdown-value"><span id="value-dependencia">0</span>/20</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Endividamento (%)</label>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" class="range-slider" id="endividamento" min="0" max="100" value="30" onchange="updateResults()">
+                <span class="range-value" id="endividamento-value">30%</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <div style="margin-top: 30px; padding: 20px; background: var(--white); border-radius: 8px;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Oportunidades de Destravamento de Valor</h3>
-            <p style="font-size: 0.95rem; line-height: 1.7; color: #666;" id="recommendationText"></p>
+        <!-- SEÇÃO: EMPRESA -->
+        <div class="form-panel" id="empresa-section" style="display: none;">
+          <div class="section-header">
+            <h2 class="section-title">Sobre a Empresa</h2>
+            <p class="section-description">Perfil e características do negócio</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Segmento de Atuação</label>
+            <input type="text" class="form-input" id="segmento" placeholder="Ex: Tecnologia, Consultoria, Comércio..." onchange="updateResults()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tempo de Operação (anos)</label>
+            <input type="number" class="form-input" id="tempo-operacao" placeholder="5" min="0" onchange="updateResults()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Número de Colaboradores</label>
+            <input type="number" class="form-input" id="colaboradores" placeholder="20" min="0" onchange="updateResults()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Receita Recorrente</label>
+            <div class="radio-options">
+              <label class="radio-option">
+                <input type="radio" name="recorrente" value="sim" onchange="updateResults()">
+                <span class="radio-label">Sim, estruturada</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="recorrente" value="parcial" onchange="updateResults()">
+                <span class="radio-label">Parcialmente</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="recorrente" value="nao" onchange="updateResults()">
+                <span class="radio-label">Não</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Concentração de Clientes</label>
+            <div class="radio-options">
+              <label class="radio-option">
+                <input type="radio" name="concentracao" value="baixa" onchange="updateResults()">
+                <span class="radio-label">Bem distribuída</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="concentracao" value="media" onchange="updateResults()">
+                <span class="radio-label">Moderadamente concentrada</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="concentracao" value="alta" onchange="updateResults()">
+                <span class="radio-label">Muito concentrada</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Maturidade Gerencial</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="range" class="range-slider" id="maturidade" min="0" max="100" value="50" onchange="updateResults()">
+              <span class="range-value" id="maturidade-value">50%</span>
+            </div>
+            <div class="form-hint">DRE, fluxo de caixa, KPIs, governance</div>
           </div>
         </div>
 
-        <div style="background: var(--gray-light); padding: 30px; border-radius: 8px; margin-top: 30px; text-align: center;">
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 15px; font-weight: 400;">Próximo Passo: Valuation Técnico Completo</h3>
-          <p style="font-size: 0.95rem; color: #666; margin-bottom: 20px;">Este diagnóstico preliminar identifica os pontos-chave. Um valuation técnico completo envolve análise de fluxo de caixa descontado, comparação de múltiplos de mercado e cenários de crescimento. Ideal para vendas, fusões, captação ou clareza sobre valor empresarial real.</p>
-          <div class="button-group" style="border-top: none; margin-top: 20px; padding-top: 0;">
-            <button class="btn btn-secondary" onclick="openWhatsApp()">Conversar no WhatsApp</button>
-            <button class="btn btn-primary" onclick="openCalendly()">Agendar Discussão</button>
+        <!-- SEÇÃO: CONTATO -->
+        <div class="form-panel" id="contato-section" style="display: none;">
+          <div class="section-header">
+            <h2 class="section-title">Seus Dados</h2>
+            <p class="section-description">Para enviarmos sua análise</p>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" class="form-input" id="nome" placeholder="Seu nome">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-input" id="email" placeholder="seu@email.com">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">WhatsApp</label>
+            <input type="tel" class="form-input" id="whatsapp" placeholder="(11) 9XXXX-XXXX">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Empresa</label>
+            <input type="text" class="form-input" id="empresa-nome" placeholder="Nome da sua empresa">
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="voltar()">← Voltar</button>
+            <button class="btn btn-primary" onclick="enviarDados()">Enviar →</button>
+          </div>
+        </div>
+
+        <!-- BOTÕES DE NAVEGAÇÃO -->
+        <div class="button-group" id="nav-buttons" style="display: none; padding-top: 0; border-top: none; margin-top: 40px;">
+          <button class="btn btn-secondary" onclick="voltar()">← Voltar</button>
+          <button class="btn btn-primary" onclick="avancar()">Avançar →</button>
         </div>
       </div>
 
-      <!-- Botões de Navegação -->
-      <div class="button-group" id="navButtons" style="display: none;">
-        <button class="btn btn-secondary" onclick="previousStep()">← Voltar</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Avançar →</button>
-      </div>
+      <!-- RESULT PANEL -->
+      <aside class="result-panel">
+        <div class="result-title">Valuation Estimado</div>
+
+        <div class="result-item">
+          <div class="result-label">Valor da Empresa</div>
+          <div class="result-value" id="valor-total">R$ 0</div>
+          <div class="result-subtitle">Estimativa preliminar</div>
+        </div>
+
+        <div class="score-box">
+          <div class="result-label">Score de Maturidade</div>
+          <div class="result-value" id="score-value">0</div>
+          <div class="result-subtitle">Potencial de valorização</div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">Múltiplo Estimado</div>
+          <div class="result-value" id="multiplo-value">0x</div>
+          <div class="result-subtitle">Faturamento</div>
+        </div>
+
+        <div id="insight-container" style="display: none;">
+          <div class="insight-box">
+            <div class="insight-text" id="insight-text"></div>
+          </div>
+        </div>
+      </aside>
     </div>
-  </div>
+  </main>
 </div>
 
 <script>
-  const steps = ['inicio', 'empresa', 'performance', 'maturidade', 'contato', 'resultado'];
-  let currentStep = 0;
-  let segmentSelected = null;
-  let recurrenceSelected = null;
+  let secaoAtual = 'inicio';
+  const secoes = ['inicio', 'financeiro', 'empresa', 'contato'];
 
-  const formData = {};
-
-  function goToStep(step) {
-    const stepIndex = steps.indexOf(step);
-    if (stepIndex === -1) return;
-
-    // Verificar se pode ir para este passo
-    if (stepIndex > 0 && currentStep < stepIndex - 1) {
-      alert('Complete as etapas anteriores primeiro');
-      return;
-    }
-
-    currentStep = stepIndex;
-    updateUI();
-  }
-
-  function nextStep() {
-    if (!validateStep()) return;
-    
-    saveCurrentStepData();
-    
-    if (currentStep < steps.length - 1) {
-      currentStep++;
-      updateUI();
-    }
-  }
-
-  function previousStep() {
-    if (currentStep > 0) {
-      currentStep--;
-      updateUI();
-    }
-  }
-
-  function validateStep() {
-    const step = steps[currentStep];
-    let isValid = true;
-
-    if (step === 'inicio') return true;
-    
-    if (step === 'empresa') {
-      let outroSegmentoValid = true;
-      if (segmentSelected === 'Outro') {
-        outroSegmentoValid = document.getElementById('outroSegmento').value.trim() !== '';
-      }
-      isValid = validateField('nomeEmpresa') && segmentSelected && validateField('faturamentoAnual') && validateField('tempoOperacao') && validateField('colaboradores') && outroSegmentoValid;
-    } else if (step === 'performance') {
-      isValid = validateField('lucroMensal') && validateField('crescimento') && validateField('endividamento') && recurrenceSelected && validateField('concentracaoClientes');
-    } else if (step === 'contato') {
-      isValid = validateField('nomeResponsavel') && validateField('whatsapp') && validateField('email') && validateField('cidadeEstado');
-    }
-
-    return isValid;
-  }
-
-  function validateField(fieldId, type = 'text') {
-    let isValid = false;
-    const field = document.getElementById(fieldId);
-
-    if (type === 'text') {
-      isValid = field.value.trim() !== '';
-    } else if (type === 'radio') {
-      isValid = document.querySelector(`input[name="${fieldId}"]:checked`) !== null;
-    }
-
-    const group = field?.closest('.form-group') || document.querySelector(`input[name="${fieldId}"]`)?.closest('.form-group');
-    if (group) {
-      group.classList.toggle('error', !isValid);
-    }
-
-    return isValid;
-  }
-
-  function saveCurrentStepData() {
-    const step = steps[currentStep];
-
-    if (step === 'empresa') {
-      formData.nomeEmpresa = document.getElementById('nomeEmpresa').value;
-      formData.segmento = segmentSelected === 'Outro' ? document.getElementById('outroSegmento').value : segmentSelected;
-      formData.faturamentoAnual = getNumericValue(document.getElementById('faturamentoAnual'));
-      formData.tempoOperacao = document.getElementById('tempoOperacao').value;
-      formData.colaboradores = document.getElementById('colaboradores').value;
-    } else if (step === 'performance') {
-      formData.lucroMensal = getNumericValue(document.getElementById('lucroMensal'));
-      formData.crescimento = document.getElementById('crescimento').value;
-      formData.endividamento = document.getElementById('endividamento').value;
-      formData.receitaRecorrente = recurrenceSelected;
-      formData.concentracaoClientes = document.getElementById('concentracaoClientes').value;
-    } else if (step === 'maturidade') {
-      formData.dreGerencial = document.getElementById('dreGerencial').checked;
-      formData.fluxoCaixa = document.getElementById('fluxoCaixa').checked;
-      formData.indicadores = document.getElementById('indicadores').checked;
-      formData.erp = document.getElementById('erp').checked;
-      formData.precificacao = document.getElementById('precificacao').checked;
-      formData.conselho = document.getElementById('conselho').checked;
-      formData.gestaoFinanceira = document.getElementById('gestaoFinanceira').checked;
-    } else if (step === 'contato') {
-      formData.nomeResponsavel = document.getElementById('nomeResponsavel').value;
-      formData.whatsapp = document.getElementById('whatsapp').value;
-      formData.email = document.getElementById('email').value;
-      formData.cidadeEstado = document.getElementById('cidadeEstado').value;
-
-      // Calcular resultados
-      calculateAndShowResults();
-    }
-  }
-
-  function updateUI() {
-    // Atualizar seções visíveis
-    document.querySelectorAll('.content-section').forEach((section, idx) => {
-      section.classList.toggle('active', idx === currentStep);
+  function navigateTo(secao) {
+    document.querySelectorAll('[id$="-section"]').forEach(el => {
+      el.style.display = el.id === `${secao}-section` ? 'block' : 'none';
     });
 
-    // Atualizar menu
-    document.querySelectorAll('.menu-item').forEach((item, idx) => {
-      item.classList.toggle('active', steps[idx] === steps[currentStep]);
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.section === secao);
     });
 
-    // Atualizar progress
-    const progress = ((currentStep + 1) / steps.length) * 100;
-    document.getElementById('progressBar').style.width = progress + '%';
-    document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
-
-    // Mostrar/esconder botões de navegação
-    const navButtons = document.getElementById('navButtons');
-    if (currentStep === 0 || currentStep === steps.length - 1) {
-      navButtons.style.display = 'none';
-    } else {
-      navButtons.style.display = 'flex';
-    }
-
-    // Atualizar texto do botão
-    const nextBtn = document.getElementById('nextBtn');
-    if (currentStep === steps.length - 2) {
-      nextBtn.textContent = 'Gerar Diagnóstico →';
-    } else {
-      nextBtn.textContent = 'Avançar →';
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    secaoAtual = secao;
+    document.getElementById('nav-buttons').style.display = secao !== 'contato' ? 'flex' : 'none';
+    updateProgress();
   }
 
-  function selectSegment(btn, value) {
-    document.querySelectorAll('[onclick*="selectSegment"]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    segmentSelected = value;
-    
-    // Mostrar/ocultar campo de outro segmento
-    const outroField = document.getElementById('outroSegmentoField');
-    if (value === 'Outro') {
-      outroField.style.display = 'block';
-      document.getElementById('outroSegmento').focus();
-    } else {
-      outroField.style.display = 'none';
-      document.getElementById('outroSegmento').value = '';
+  function avancar() {
+    const index = secoes.indexOf(secaoAtual);
+    if (index < secoes.length - 1) {
+      navigateTo(secoes[index + 1]);
     }
   }
 
-  function selectRecurrence(btn, value) {
-    document.querySelectorAll('[onclick*="selectRecurrence"]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    recurrenceSelected = value;
+  function voltar() {
+    const index = secoes.indexOf(secaoAtual);
+    if (index > 0) {
+      navigateTo(secoes[index - 1]);
+    }
   }
 
-  // Função para formatar moeda em tempo real
-  function formatCurrencyInput(input) {
+  function updateProgress() {
+    const index = secoes.indexOf(secaoAtual);
+    const progress = ((index + 1) / secoes.length) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+  }
+
+  function setMode(mode) {
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const avancado = document.getElementById('modo-avancado');
+    if (mode === 'avancado') {
+      avancado.classList.add('show');
+    } else {
+      avancado.classList.remove('show');
+    }
+  }
+
+  function formatCurrency(input) {
     let value = input.value.replace(/\D/g, '');
-    
     if (value.length === 0) {
       input.value = '';
       return;
     }
-
     value = value.padStart(3, '0');
     let formatted = (parseInt(value) / 100).toFixed(2);
     formatted = formatted.replace('.', ',');
     formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     input.value = 'R$ ' + formatted;
+    updateResults();
   }
 
-  // Função para extrair número do input formatado
   function getNumericValue(input) {
-    let value = input.value.replace(/\D/g, '');
-    return value ? parseInt(value) : 0;
+    return parseInt(input.value.replace(/\D/g, '')) || 0;
   }
 
-  // Adicionar listeners ao carregar
-  window.addEventListener('DOMContentLoaded', function() {
-    const faturamentoInput = document.getElementById('faturamentoAnual');
-    const lucroInput = document.getElementById('lucroMensal');
-    
-    if (faturamentoInput) {
-      faturamentoInput.addEventListener('input', function() {
-        formatCurrencyInput(this);
-      });
-    }
-    
-    if (lucroInput) {
-      lucroInput.addEventListener('input', function() {
-        formatCurrencyInput(this);
-      });
-    }
-  });
+  function updateResults() {
+    const faturamento = getNumericValue(document.getElementById('faturamento'));
+    const lucro = getNumericValue(document.getElementById('lucro'));
+    const crescimento = parseFloat(document.getElementById('crescimento').value);
+    const maturidade = parseFloat(document.getElementById('maturidade').value);
+    const tempo = parseFloat(document.getElementById('tempo-operacao').value) || 1;
+    const recorrente = document.querySelector('input[name="recorrente"]:checked')?.value || 'nao';
+    const concentracao = document.querySelector('input[name="concentracao"]:checked')?.value || 'alta';
 
-  function updateMaturityScore() {
-    const count = [
-      document.getElementById('dreGerencial').checked,
-      document.getElementById('fluxoCaixa').checked,
-      document.getElementById('indicadores').checked,
-      document.getElementById('erp').checked,
-      document.getElementById('precificacao').checked,
-      document.getElementById('conselho').checked,
-      document.getElementById('gestaoFinanceira').checked
-    ].filter(x => x).length;
+    // Atualizar range values
+    document.getElementById('crescimento-value').textContent = Math.round(crescimento) + '%';
+    document.getElementById('maturidade-value').textContent = Math.round(maturidade) + '%';
 
-    const percentage = Math.round((count / 7) * 100);
-    document.getElementById('maturityPercentage').textContent = percentage + '%';
-  }
+    // Cálculo do múltiplo base
+    let multiplo = 3;
 
-  function calculateAndShowResults() {
-    // Usar valores reais digitados pelo usuário
-    const lucroMensal = formData.lucroMensal;
-    const lucroAnual = lucroMensal * 12;
-    const faturamentoEstimado = formData.faturamentoAnual;
+    // Ajustes por crescimento
+    if (crescimento > 20) multiplo += 2;
+    else if (crescimento > 10) multiplo += 1;
 
-    // Determinar classe de tamanho com base em faturamento real
-    let sizeClass = 'pequena';
-    if (faturamentoEstimado >= 10000000) sizeClass = 'estruturada';
-    else if (faturamentoEstimado >= 2000000) sizeClass = 'media';
+    // Ajustes por maturidade
+    multiplo += (maturidade / 100) * 3;
 
-    const baseMultiples = { pequena: 3, media: 5, estruturada: 7 };
-    let multiplier = baseMultiples[sizeClass];
+    // Ajustes por recorrência
+    if (recorrente === 'sim') multiplo += 1.5;
+    else if (recorrente === 'parcial') multiplo += 0.5;
 
-    let positiveFactors = [];
-    let negativeFactors = [];
+    // Ajustes por concentração
+    if (concentracao === 'alta') multiplo -= 1;
+    else if (concentracao === 'media') multiplo -= 0.5;
 
-    if (formData.receitaRecorrente === 'Sim') {
-      multiplier += 0.4;
-      positiveFactors.push('Receita recorrente estruturada');
-    } else if (formData.receitaRecorrente === 'Parcial') {
-      multiplier += 0.15;
-    }
+    // Ajustes por tempo de operação
+    if (tempo < 2) multiplo -= 1;
+    else if (tempo > 10) multiplo += 0.5;
 
-    const crescimento = parseFloat(formData.crescimento.replace('%', '').trim());
-    if (!isNaN(crescimento) && crescimento > 15) {
-      multiplier += 0.35;
-      positiveFactors.push('Crescimento consistente e acelerado');
-    } else if (!isNaN(crescimento) && crescimento > 0) {
-      multiplier += 0.15;
-    }
+    if (multiplo < 1) multiplo = 1;
+    if (multiplo > 12) multiplo = 12;
 
-    if (formData.concentracaoClientes.toLowerCase().includes('distribuída') || formData.concentracaoClientes.toLowerCase().includes('baixa')) {
-      multiplier += 0.25;
-      positiveFactors.push('Carteira de clientes bem distribuída');
-    }
+    // Cálculo do valor
+    const baseCalculo = lucro > 0 ? lucro * 12 : faturamento * 0.1;
+    const valor = Math.round(baseCalculo * multiplo);
 
-    const maturityCount = [formData.dreGerencial, formData.fluxoCaixa, formData.indicadores, formData.erp, formData.precificacao, formData.conselho, formData.gestaoFinanceira].filter(x => x).length;
+    // Score de maturidade
+    let score = Math.round(maturidade);
+    if (valor > 0) score = Math.min(100, Math.round(maturidade * 0.6 + (Math.min(crescimento, 50) / 50) * 40));
 
-    if (maturityCount >= 6) {
-      multiplier += 0.4;
-      positiveFactors.push('Gestão estruturada e profissionalizada');
-    } else if (maturityCount >= 4) {
-      multiplier += 0.2;
-    }
+    // Atualizar resultado
+    document.getElementById('valor-total').textContent = 'R$ ' + valor.toLocaleString('pt-BR');
+    document.getElementById('multiplo-value').textContent = multiplo.toFixed(1) + 'x';
+    document.getElementById('score-value').textContent = score;
 
-    if (formData.dreGerencial && formData.fluxoCaixa) {
-      multiplier += 0.2;
-      positiveFactors.push('Controles financeiros estruturados');
-    }
-
-    if (formData.erp) {
-      multiplier += 0.15;
-      positiveFactors.push('Sistemas integrados de gestão');
-    }
-
-    if (lucroMensal === 0) {
-      multiplier -= 0.8;
-      negativeFactors.push('Empresa em situação de prejuízo ou sem lucro');
-    }
-
-    if (formData.endividamento.toLowerCase().includes('alto')) {
-      multiplier -= 0.3;
-      negativeFactors.push('Endividamento elevado');
-    }
-
-    if (formData.concentracaoClientes.toLowerCase().includes('concentrada')) {
-      multiplier -= 0.25;
-      negativeFactors.push('Carteira de clientes concentrada');
-    }
-
-    if (multiplier < 1) multiplier = 1;
-    if (multiplier > 12) multiplier = 12;
-
-    const valuationMin = lucroAnual * (multiplier - 0.5);
-    const valuationMax = lucroAnual * (multiplier + 0.5);
-
-    // Score breakdown
-    let gestaoFinanceira = 0;
-    if (formData.dreGerencial) gestaoFinanceira += 7;
-    if (formData.fluxoCaixa) gestaoFinanceira += 7;
-    if (formData.indicadores) gestaoFinanceira += 6;
-    gestaoFinanceira = Math.min(gestaoFinanceira, 20);
-
-    let governanca = 0;
-    if (formData.conselho) governanca += 10;
-    if (formData.precificacao) governanca += 5;
-    governanca = Math.min(governanca, 15);
-
-    let escalabilidade = 0;
-    if (!isNaN(crescimento) && crescimento > 0) escalabilidade = Math.min(crescimento / 2, 15);
-    if (formData.erp) escalabilidade += 5;
-    escalabilidade = Math.min(escalabilidade, 15);
-
-    let caixa = 0;
-    if (lucroAnual > 500000) caixa = 15;
-    else if (lucroAnual > 200000) caixa = 12;
-    else if (lucroAnual > 50000) caixa = 8;
-    else if (lucroAnual > 0) caixa = 3;
-    if (formData.endividamento.toLowerCase().includes('alto')) caixa -= 3;
-    caixa = Math.max(caixa, 0);
-    caixa = Math.min(caixa, 15);
-
-    let estrutura = 0;
-    if (formData.gestaoFinanceira) estrutura += 8;
-    if (formData.erp) estrutura += 4;
-    if (formData.conselho) estrutura += 3;
-    estrutura = Math.min(estrutura, 15);
-
-    let dependencia = 15;
-    if (formData.gestaoFinanceira && formData.conselho) dependencia = 20;
-
-    const dmValueScore = Math.round((gestaoFinanceira + governanca + escalabilidade + caixa + estrutura + dependencia) / 6);
-
-    // Recomendação estratégica
-    let recommendation = '';
-    if (dmValueScore < 40) {
-      recommendation = 'Sua empresa possui oportunidades significativas de estruturação. O primeiro passo estratégico é implementar gestão financeira clara (DRE gerencial, fluxo de caixa), reduzir dependência de sócios e formalizar processos decisórios. Com essas mudanças, o potencial de valorização pode dobrar.';
-    } else if (dmValueScore < 60) {
-      recommendation = 'Sua empresa demonstra potencial considerável. Recomendamos intensificar a previsibilidade operacional através de controles financeiros mais robustos, melhorar distribuição de clientes e formalizar governança. Essas ações ampliam os múltiplos de negociação.';
-    } else if (dmValueScore < 80) {
-      recommendation = 'Sua empresa é bem estruturada e preparada para crescimento. O próximo passo é consolidar a escalabilidade — automatizar processos, reduzir dependências-chave e explorar novas linhas de receita. Gestão profissional já implementada é seu diferencial.';
+    // Insight
+    let insight = '';
+    if (score < 30) {
+      insight = 'Sua empresa tem potencial de estruturação. Foco em profissionalização pode aumentar valor em até 3x.';
+    } else if (score < 60) {
+      insight = 'Base sólida. Intensifique controles financeiros e reduzir concentração de clientes pode ampliar múltiplos.';
+    } else if (score < 85) {
+      insight = 'Empresa bem estruturada. Próximo passo: estratégia de crescimento alinhada e consolidação de mercado.';
     } else {
-      recommendation = 'Sua empresa é altamente profissionalizada com forte potencial de mercado. Foco agora em estratégia de crescimento alinhada — expansão geográfica, M&A ou consolidação de liderança. Estrutura e governança já sustentam este nível de ambição.';
+      insight = 'Empresa altamente profissionalizada. Potencial para negociações de alto valor e captação estratégica.';
     }
 
-    // Exibir resultados
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
-    document.getElementById('resultDate').textContent = `Leitura realizada em ${dateStr} para ${formData.nomeEmpresa}`;
-    
-    document.getElementById('valuationRange').textContent = `${formatCurrency(valuationMin)} a ${formatCurrency(valuationMax)}`;
-    document.getElementById('scoreValue').textContent = dmValueScore;
-
-    document.getElementById('value-gestao').textContent = Math.round(gestaoFinanceira);
-    document.getElementById('fill-gestao').style.width = (gestaoFinanceira / 20) * 100 + '%';
-
-    document.getElementById('value-governanca').textContent = Math.round(governanca);
-    document.getElementById('fill-governanca').style.width = (governanca / 15) * 100 + '%';
-
-    document.getElementById('value-escalabilidade').textContent = Math.round(escalabilidade);
-    document.getElementById('fill-escalabilidade').style.width = (escalabilidade / 15) * 100 + '%';
-
-    document.getElementById('value-caixa').textContent = Math.round(caixa);
-    document.getElementById('fill-caixa').style.width = (caixa / 15) * 100 + '%';
-
-    document.getElementById('value-estrutura').textContent = Math.round(estrutura);
-    document.getElementById('fill-estrutura').style.width = (estrutura / 15) * 100 + '%';
-
-    document.getElementById('value-dependencia').textContent = Math.round(dependencia);
-    document.getElementById('fill-dependencia').style.width = (dependencia / 20) * 100 + '%';
-
-    document.getElementById('recommendationText').textContent = recommendation;
-
-    currentStep = steps.length - 1;
-    updateUI();
+    document.getElementById('insight-text').textContent = insight;
+    document.getElementById('insight-container').style.display = 'block';
   }
 
-  function formatCurrency(value) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  }
-
-  function openCalendly() {
-    window.open('https://calendly.com/seu-link', '_blank');
-  }
-
-  function openWhatsApp() {
-    const text = encodeURIComponent('Olá! Gostaria de entender melhor meu valuation técnico e as oportunidades de crescimento.');
-    window.open(`https://wa.me/5511987654321?text=${text}`, '_blank');
+  function enviarDados() {
+    alert('Dados enviados com sucesso! Um consultor da D&M entrará em contato em breve.');
   }
 
   // Inicializar
-  updateUI();
+  updateProgress();
+  updateResults();
 </script>
 
 </body>
