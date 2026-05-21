@@ -741,11 +741,17 @@
           <div class="error-message">Selecione um segmento</div>
         </div>
 
+        <div class="form-group" id="outroSegmentoField" style="display: none;">
+          <label>Qual é o Segmento?</label>
+          <input type="text" id="outroSegmento" placeholder="Ex: Consultoria de RH, Distribuição, Manufatura">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+
         <div class="form-group">
           <label>Faturamento Anual Aproximado</label>
           <p class="context-note">Empresas maiores geralmente desfrutam de múltiplos mais altos, mas só se a operação for profissionalizada.</p>
-          <input type="number" id="faturamentoAnual" placeholder="Ex: 2500000" min="0" step="1000">
-          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em R$ (ex: 2500000 para R$ 2,5 milhões)</div>
+          <input type="text" id="faturamentoAnual" placeholder="Ex: R$ 2.500.000,00" inputmode="numeric">
+          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em reais (ex: 2500000 ou com separadores)</div>
           <div class="error-message">Digite um valor de faturamento válido</div>
         </div>
 
@@ -775,8 +781,8 @@
         <div class="form-group">
           <label>Lucro Médio Mensal Aproximado</label>
           <p class="context-note">O que realmente importa é geração de resultado previsível. Prejuízos contínuos destroem valor rapidamente.</p>
-          <input type="number" id="lucroMensal" placeholder="Ex: 50000" min="0" step="1000">
-          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em R$ (ex: 50000 para R$ 50 mil). Digite 0 se houver prejuízo.</div>
+          <input type="text" id="lucroMensal" placeholder="Ex: R$ 50.000,00" inputmode="numeric">
+          <div style="font-size: 0.85rem; color: #999; margin-top: 8px;">Digite o valor em reais (ex: 50000 ou com separadores). Digite 0 se houver prejuízo.</div>
           <div class="error-message">Digite um valor de lucro válido</div>
         </div>
 
@@ -1059,7 +1065,11 @@
     if (step === 'inicio') return true;
     
     if (step === 'empresa') {
-      isValid = validateField('nomeEmpresa') && segmentSelected && validateField('faturamentoAnual') && validateField('tempoOperacao') && validateField('colaboradores');
+      let outroSegmentoValid = true;
+      if (segmentSelected === 'Outro') {
+        outroSegmentoValid = document.getElementById('outroSegmento').value.trim() !== '';
+      }
+      isValid = validateField('nomeEmpresa') && segmentSelected && validateField('faturamentoAnual') && validateField('tempoOperacao') && validateField('colaboradores') && outroSegmentoValid;
     } else if (step === 'performance') {
       isValid = validateField('lucroMensal') && validateField('crescimento') && validateField('endividamento') && recurrenceSelected && validateField('concentracaoClientes');
     } else if (step === 'contato') {
@@ -1092,12 +1102,12 @@
 
     if (step === 'empresa') {
       formData.nomeEmpresa = document.getElementById('nomeEmpresa').value;
-      formData.segmento = segmentSelected;
-      formData.faturamentoAnual = parseFloat(document.getElementById('faturamentoAnual').value) || 0;
+      formData.segmento = segmentSelected === 'Outro' ? document.getElementById('outroSegmento').value : segmentSelected;
+      formData.faturamentoAnual = getNumericValue(document.getElementById('faturamentoAnual'));
       formData.tempoOperacao = document.getElementById('tempoOperacao').value;
       formData.colaboradores = document.getElementById('colaboradores').value;
     } else if (step === 'performance') {
-      formData.lucroMensal = parseFloat(document.getElementById('lucroMensal').value) || 0;
+      formData.lucroMensal = getNumericValue(document.getElementById('lucroMensal'));
       formData.crescimento = document.getElementById('crescimento').value;
       formData.endividamento = document.getElementById('endividamento').value;
       formData.receitaRecorrente = recurrenceSelected;
@@ -1160,6 +1170,16 @@
     document.querySelectorAll('[onclick*="selectSegment"]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     segmentSelected = value;
+    
+    // Mostrar/ocultar campo de outro segmento
+    const outroField = document.getElementById('outroSegmentoField');
+    if (value === 'Outro') {
+      outroField.style.display = 'block';
+      document.getElementById('outroSegmento').focus();
+    } else {
+      outroField.style.display = 'none';
+      document.getElementById('outroSegmento').value = '';
+    }
   }
 
   function selectRecurrence(btn, value) {
@@ -1167,6 +1187,46 @@
     btn.classList.add('active');
     recurrenceSelected = value;
   }
+
+  // Função para formatar moeda em tempo real
+  function formatCurrencyInput(input) {
+    let value = input.value.replace(/\D/g, '');
+    
+    if (value.length === 0) {
+      input.value = '';
+      return;
+    }
+
+    value = value.padStart(3, '0');
+    let formatted = (parseInt(value) / 100).toFixed(2);
+    formatted = formatted.replace('.', ',');
+    formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    input.value = 'R$ ' + formatted;
+  }
+
+  // Função para extrair número do input formatado
+  function getNumericValue(input) {
+    let value = input.value.replace(/\D/g, '');
+    return value ? parseInt(value) : 0;
+  }
+
+  // Adicionar listeners ao carregar
+  window.addEventListener('DOMContentLoaded', function() {
+    const faturamentoInput = document.getElementById('faturamentoAnual');
+    const lucroInput = document.getElementById('lucroMensal');
+    
+    if (faturamentoInput) {
+      faturamentoInput.addEventListener('input', function() {
+        formatCurrencyInput(this);
+      });
+    }
+    
+    if (lucroInput) {
+      lucroInput.addEventListener('input', function() {
+        formatCurrencyInput(this);
+      });
+    }
+  });
 
   function updateMaturityScore() {
     const count = [
