@@ -60,8 +60,11 @@
     --gold-deep: #cfa96e;
     --emerald-deep: #082c20;
     --muted: #8a8880;
-    --border: rgba(255,255,255,.09);
-    --border-strong: rgba(255,255,255,.18);
+    --muted-light: #a3a19a;
+    --field-bg: #13221a;
+    --field-bg-hover: #182a1c;
+    --border: rgba(255,255,255,.16);
+    --border-strong: rgba(255,255,255,.28);
     --destructive: #c1795a;
     --positive: #8fbf8a;
   }
@@ -78,7 +81,7 @@
   .skip-link {
     position: absolute; top: -80px; left: 12px; z-index: 1000;
     background: var(--gold); color: var(--background); text-decoration: none;
-    padding: 12px 22px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    padding: 12px 22px; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
     transition: top .2s ease;
   }
   .skip-link:focus { top: 12px; }
@@ -92,7 +95,7 @@
 
   .eyebrow-row { display: flex; align-items: center; gap: 1rem; }
   .eyebrow {
-    font-size: .6875rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: var(--gold);
+    font-size: .75rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: var(--gold);
   }
   .gold-rule { display: block; width: 32px; height: 1px; background: linear-gradient(to right, var(--gold) 0%, rgba(184,148,90,.3) 60%, transparent 100%); }
   .grid-backdrop {
@@ -115,10 +118,10 @@
   .header-logo { display: flex; align-items: center; text-decoration: none; }
   .header-logo img { height: 34px; width: auto; filter: brightness(0) invert(1); }
   .header-nav { display: flex; align-items: center; gap: 2rem; }
-  .header-nav .tool-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .header-nav .tool-label { font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-light); }
   .header-nav .contato-link {
     border-bottom: 1px solid var(--gold); padding-bottom: 2px;
-    font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+    font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
     text-decoration: none; transition: opacity .2s;
   }
   .header-nav .contato-link:hover { opacity: .7; }
@@ -154,7 +157,7 @@
   .progress-fill { height: 100%; background: var(--gold); transition: width .4s ease; }
 
   .trilha { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.75rem; }
-  .trilha-bloco-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .trilha-bloco-label { font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-light); }
   .trilha-steps { list-style: none; margin-top: .75rem; display: flex; flex-direction: column; gap: .5rem; padding-left: 1rem; border-left: 1px solid var(--border); }
   .trilha-steps button {
     background: none; border: none; padding: 0; text-align: left; cursor: pointer;
@@ -180,8 +183,8 @@
   .step-body { display: flex; flex-direction: column; gap: 3rem; }
 
   .field-label { display: block; margin-bottom: .9rem; }
-  .field-label .txt { display: block; font-size: .7rem; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-  .field-label .hint { display: block; margin-top: .35rem; font-size: .78rem; line-height: 1.55; color: rgba(138,136,128,.8); max-width: 46ch; }
+  .field-label .txt { display: block; font-size: .78rem; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-light); }
+  .field-label .hint { display: block; margin-top: .35rem; font-size: .85rem; line-height: 1.6; color: var(--muted-light); max-width: 46ch; }
 
   fieldset { border: none; }
   legend { padding: 0; width: 100%; }
@@ -194,10 +197,10 @@
   .option-radio { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .option-card {
     display: flex; align-items: flex-start; gap: .75rem;
-    border: 1px solid var(--border); background: rgba(15,26,18,.6);
+    border: 1px solid var(--border); background: var(--field-bg);
     padding: 14px 16px; cursor: pointer; transition: all .2s;
   }
-  .option-card:hover { border-color: var(--border-strong); background: var(--surface); }
+  .option-card:hover { border-color: var(--border-strong); background: var(--field-bg-hover); }
   .option-radio:checked + .option-card { border-color: var(--gold); background: var(--surface-raised); }
   .option-radio:focus-visible + .option-card { outline: 2px solid var(--gold); outline-offset: 2px; }
   .option-dot { margin-top: 3px; width: 10px; height: 10px; flex-shrink: 0; border: 1px solid var(--border-strong); background: transparent; transition: all .2s; }
@@ -205,14 +208,14 @@
   .option-card .option-text { display: flex; flex-direction: column; gap: .25rem; }
   .option-card .option-label { font-size: .875rem; line-height: 1.4; color: rgba(245,243,238,.8); }
   .option-radio:checked + .option-card .option-label { color: var(--foreground); }
-  .option-card .option-hint { font-size: .75rem; color: var(--muted); }
+  .option-card .option-hint { font-size: .82rem; color: var(--muted-light); }
 
   .money-field, .text-field { display: block; }
   .money-box {
-    display: flex; align-items: stretch; border: 1px solid var(--border); background: rgba(15,26,18,.6); transition: border-color .2s;
+    display: flex; align-items: stretch; border: 1px solid var(--border); background: var(--field-bg); transition: border-color .2s;
   }
   .money-box:focus-within { border-color: var(--gold); }
-  .money-prefix { display: flex; align-items: center; border-right: 1px solid var(--border); padding: 0 .9rem; font-size: .75rem; letter-spacing: .05em; color: var(--muted); }
+  .money-prefix { display: flex; align-items: center; border-right: 1px solid var(--border); padding: 0 .9rem; font-size: .82rem; letter-spacing: .05em; color: var(--muted-light); }
   .money-box input {
     width: 100%; background: transparent; border: none; outline: none;
     padding: .8rem .9rem; text-align: right; font-family: 'Inter', sans-serif; font-size: 1rem;
@@ -223,7 +226,7 @@
   .money-box.pct input { text-align: right; }
 
   .text-field input, .text-field select {
-    width: 100%; border: 1px solid var(--border); background: rgba(15,26,18,.6);
+    width: 100%; border: 1px solid var(--border); background: var(--field-bg);
     padding: .8rem .9rem; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--foreground);
     outline: none; transition: border-color .2s;
   }
@@ -236,22 +239,22 @@
 
   .naosei-row { display: flex; align-items: center; gap: .6rem; margin-top: .6rem; }
   .naosei-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--gold); flex-shrink: 0; }
-  .naosei-row label { font-size: .76rem; color: var(--muted); cursor: pointer; }
+  .naosei-row label { font-size: .82rem; color: var(--muted-light); cursor: pointer; }
 
   .ebitda-preview {
     display: flex; flex-wrap: wrap; gap: 2.5rem;
-    border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border); background: var(--field-bg); padding: 1.25rem 1.5rem;
   }
-  .ebitda-preview .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .ebitda-preview .lbl { font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-light); }
   .ebitda-preview .val { margin-top: .3rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: var(--gold); }
   .ebitda-preview .val.alt { color: rgba(245,243,238,.85); }
   .ebitda-preview .val.neg { color: var(--destructive); }
-  .ebitda-note { font-size: .78rem; line-height: 1.7; color: rgba(138,136,128,.85); max-width: 58ch; }
+  .ebitda-note { font-size: .85rem; line-height: 1.7; color: var(--muted-light); max-width: 58ch; }
 
   .action-btn {
     display: inline-flex; align-items: center; justify-content: center; gap: .75rem;
     border: 1px solid var(--gold); background: var(--gold); color: var(--background);
-    padding: 14px 28px; font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 500;
+    padding: 14px 28px; font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 500;
     letter-spacing: .2em; text-transform: uppercase; text-decoration: none; cursor: pointer;
     transition: all .2s;
   }
@@ -261,12 +264,12 @@
   .action-btn.ghost:hover { border-color: var(--gold); color: var(--gold); }
 
   .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; border-top: 1px solid var(--border); padding-top: 2.25rem; }
-  .step-nav .hint { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(138,136,128,.7); }
+  .step-nav .hint { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-light); }
 
   /* ---------- Consentimento ---------- */
-  .consent-block { display: flex; align-items: flex-start; gap: .8rem; padding: 1rem 1.1rem; border: 1px solid var(--border); background: rgba(15,26,18,.5); }
+  .consent-block { display: flex; align-items: flex-start; gap: .8rem; padding: 1rem 1.1rem; border: 1px solid var(--border); background: var(--field-bg); }
   .consent-block input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--gold); flex-shrink: 0; }
-  .consent-block label { font-size: .82rem; line-height: 1.65; color: rgba(245,243,238,.85); }
+  .consent-block label { font-size: .875rem; line-height: 1.65; color: rgba(245,243,238,.85); }
   .consent-block label a { color: var(--gold); text-decoration: underline; }
   .consent-block.required { border-color: rgba(184,148,90,.35); }
   .consent-required-mark { color: var(--gold); }
@@ -282,10 +285,10 @@
   .result-section > p { max-width: 660px; font-size: .9rem; line-height: 1.75; color: var(--muted); }
   .result-section > p strong { font-weight: 500; color: rgba(245,243,238,.9); }
 
-  .faixa-panel { border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 2rem; }
+  .faixa-panel { border: 1px solid var(--border); background: var(--field-bg); padding: 2rem; }
   @media (min-width: 768px) { .faixa-panel { padding: 2.5rem; } }
   .faixa-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
-  .faixa-item .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .faixa-item .lbl { font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-light); }
   .faixa-item .val { margin-top: .5rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: rgba(245,243,238,.8); }
   .faixa-item.center { text-align: center; }
   .faixa-item.right { text-align: right; }
@@ -293,25 +296,25 @@
   .faixa-ruler { position: relative; margin-top: 2.25rem; height: 3px; width: 100%; background: var(--border-strong); }
   .faixa-ruler .rule-fill { position: absolute; inset: 0; opacity: .5; background: linear-gradient(to right, var(--gold), rgba(184,148,90,.2)); }
   .faixa-ruler .marker { position: absolute; top: -7px; width: 2px; height: 16px; background: var(--gold); }
-  .faixa-note { margin-top: 1.25rem; font-size: .78rem; line-height: 1.7; color: var(--muted); }
+  .faixa-note { margin-top: 1.25rem; font-size: .85rem; line-height: 1.7; color: var(--muted-light); }
 
   .metric-grid { display: grid; grid-template-columns: 1fr; gap: 2rem 2.5rem; }
   @media (min-width: 640px) { .metric-grid { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1024px) { .metric-grid { grid-template-columns: 1fr 1fr 1fr; } }
   .metric { border-top: 1px solid var(--border); padding-top: 1rem; }
-  .metric .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .metric .lbl { font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-light); }
   .metric .val { margin-top: .5rem; font-size: 1.2rem; font-variant-numeric: tabular-nums; color: var(--foreground); }
-  .metric .note { margin-top: .3rem; font-size: .74rem; line-height: 1.5; color: var(--muted); }
+  .metric .note { margin-top: .3rem; font-size: .8rem; line-height: 1.5; color: var(--muted-light); }
 
-  details.premissas { border: 1px solid var(--border); background: rgba(15,26,18,.4); }
+  details.premissas { border: 1px solid var(--border); background: var(--field-bg); }
   details.premissas summary {
-    cursor: pointer; padding: 1.1rem 1.4rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; padding: 1.1rem 1.4rem; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
     color: var(--gold); list-style: none; display: flex; align-items: center; justify-content: space-between;
   }
   details.premissas summary::-webkit-details-marker { display: none; }
   details.premissas summary::after { content: "+"; font-size: 1.1rem; color: var(--gold); }
   details.premissas[open] summary::after { content: "–"; }
-  details.premissas .premissas-body { padding: 0 1.4rem 1.4rem; font-size: .82rem; line-height: 1.8; color: var(--muted); }
+  details.premissas .premissas-body { padding: 0 1.4rem 1.4rem; font-size: .875rem; line-height: 1.8; color: var(--muted-light); }
   details.premissas .premissas-body p { margin-bottom: .9rem; }
   details.premissas .premissas-body ul { margin: .5rem 0 .9rem 1.2rem; }
   details.premissas .premissas-body li { margin-bottom: .4rem; }
@@ -326,7 +329,7 @@
   .pilar-row .p-label { width: 14rem; flex-shrink: 0; font-size: .875rem; color: rgba(245,243,238,.85); }
   .pilar-row .p-track { flex: 1; height: 2px; background: var(--border-strong); }
   .pilar-row .p-fill { height: 100%; background: var(--gold); }
-  .pilar-row .p-nota { width: 8rem; flex-shrink: 0; text-align: right; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .pilar-row .p-nota { width: 8rem; flex-shrink: 0; text-align: right; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-light); }
   @media (max-width: 640px) {
     .pilar-row { flex-wrap: wrap; gap: .5rem 1rem; }
     .pilar-row .p-label { width: 100%; }
@@ -347,7 +350,7 @@
   .alertas-list p, .premissas-usadas-list p { font-size: .875rem; line-height: 1.7; color: var(--muted); }
 
   .destaques-list { display: flex; flex-wrap: wrap; gap: .6rem; }
-  .destaques-list span { border: 1px solid var(--border-strong); padding: .4rem .8rem; font-size: .74rem; color: rgba(245,243,238,.75); }
+  .destaques-list span { border: 1px solid var(--border-strong); padding: .4rem .8rem; font-size: .8rem; color: rgba(245,243,238,.75); }
 
   .cta-panel { border: 1px solid var(--border-strong); background: rgba(8,44,32,.4); padding: 2rem; }
   @media (min-width: 768px) { .cta-panel { padding: 3rem; } }
@@ -356,9 +359,9 @@
   .cta-panel > p { margin-top: 1.25rem; max-width: 640px; font-size: .875rem; line-height: 1.7; color: var(--muted); }
   .cta-panel .btn-row { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 1rem; }
 
-  .disclaimer { border-top: 1px solid var(--border); padding-top: 2rem; font-size: .75rem; line-height: 1.75; color: rgba(138,136,128,.75); }
+  .disclaimer { border-top: 1px solid var(--border); padding-top: 2rem; font-size: .8125rem; line-height: 1.75; color: var(--muted-light); }
 
-  .form-status-note { display: none; margin-top: 1rem; font-size: .8rem; line-height: 1.7; color: var(--muted); border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 1rem 1.25rem; }
+  .form-status-note { display: none; margin-top: 1rem; font-size: .85rem; line-height: 1.7; color: var(--muted-light); border: 1px solid var(--border); background: var(--field-bg); padding: 1rem 1.25rem; }
   .form-status-note.show { display: block; }
   .form-status-note.error { border-color: rgba(193,121,90,.5); color: #e7b199; }
 
@@ -369,15 +372,73 @@
   .footer-brand { max-width: 420px; }
   .footer-logo-img { height: 26px; width: auto; filter: brightness(0) invert(1); opacity: .8; }
   .footer-brand p { margin-top: 1rem; font-size: .875rem; line-height: 1.7; color: var(--muted); }
-  .footer-link-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: .5rem; display: block; }
+  .footer-link-label { font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: .5rem; display: block; }
   .footer-top a.site-link { font-size: .875rem; color: rgba(245,243,238,.8); text-decoration: none; transition: color .2s; }
   .footer-top a.site-link:hover { color: var(--gold); }
-  .footer-bottom { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; font-size: .75rem; color: rgba(138,136,128,.6); }
+  .footer-bottom { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; font-size: .8125rem; color: var(--muted-light); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   }
+
+  /* ---------- Impressão / PDF do resultado ---------- */
+  .print-header { display: none; }
+  @media print {
+    :root {
+      --background: #ffffff;
+      --foreground: #14140f;
+      --surface: #f5f3ee;
+      --surface-raised: #ece7db;
+      --gold: #7a5f36;
+      --gold-deep: #6b532e;
+      --muted: #4a4844;
+      --muted-light: #3a3834;
+      --border: rgba(20,20,15,.18);
+      --border-strong: rgba(20,20,15,.32);
+      --destructive: #9c4c34;
+      --field-bg: #f5f3ee;
+      --field-bg-hover: #f5f3ee;
+    }
+    html, body { background: #ffffff; color: #14140f; }
+    .skip-link, header.site-header, .hero-band, .wizard-aside, #wizard-steps, .step-nav,
+    footer.site-footer, .grid-backdrop, .hero-bg-radial, .btn-row, .form-status-note,
+    .no-print { display: none !important; }
+    main { padding: 0; max-width: 100%; }
+    .wizard-grid { display: block; }
+    #result-panel { display: flex !important; gap: 1.75rem; }
+    .print-header { display: block; margin-bottom: 1rem; }
+    .print-header img { height: 30px; width: auto; }
+    .print-header .print-meta { margin-top: .5rem; font-size: .75rem; color: #4a4844; }
+    .faixa-panel, details.premissas, .cta-panel, .form-status-note { border: 1px solid var(--border); background: var(--field-bg) !important; }
+    details.premissas { display: block !important; }
+    details.premissas .premissas-body { display: block !important; }
+    .cta-panel { background: #f5f3ee !important; }
+    .faixa-item .val, .pilar-row .p-label, .fator-row .f-label, .result-section > p strong { color: #14140f; }
+    .destaques-list span { color: #14140f; border-color: var(--border-strong); }
+    .disclaimer { color: var(--muted); }
+    a[href^="http"]::after { content: ""; }
+    .action-btn { display: none !important; }
+    @page { margin: 16mm 14mm; }
+  }
+
+  /* ---------- Modo de exportação para PDF (jsPDF + html2canvas) ----------
+     Mantém a identidade visual real do site (fundo escuro, dourado, tipografia)
+     — diferente do @media print acima, que é só um fallback de impressão em
+     papel. Layout vertical, largura próxima da usada normalmente no desktop. */
+  .pdf-export-mode #result-panel {
+    display: flex !important; width: 1040px; max-width: none; padding: 40px;
+    background: var(--background); box-sizing: border-box;
+  }
+  .pdf-export-mode .print-header { display: block; margin-bottom: 1rem; }
+  .pdf-export-mode .print-header img { height: 34px; width: auto; filter: brightness(0) invert(1); }
+  .pdf-export-mode .print-header .print-meta { margin-top: .6rem; font-size: .8rem; color: var(--muted-light); }
+  /* grades em várias colunas fixas — não dependem do tamanho de tela de quem gera o PDF,
+     já que media query responde à largura real da janela, não à largura forçada acima */
+  .pdf-export-mode .metric-grid { grid-template-columns: 1fr 1fr 1fr !important; }
+  .pdf-export-mode .fatores-grid { grid-template-columns: 1fr 1fr !important; }
+  .pdf-export-mode details.premissas .premissas-body { display: block !important; }
+  .pdf-export-mode .btn-row, .pdf-export-mode .form-status-note, .pdf-export-mode .action-btn { display: none !important; }
   </style>
 </head>
 <body>
@@ -435,7 +496,7 @@
             <li><p class="eyebrow">Critério</p><p style="margin-top:.5rem;font-size:.875rem;line-height:1.7;color:var(--muted);">Fatores de ajuste aplicados de forma separada — sem repetir o mesmo julgamento em mais de um lugar do cálculo.</p></li>
             <li><p class="eyebrow">Leitura</p><p style="margin-top:.5rem;font-size:.875rem;line-height:1.7;color:var(--muted);">Faixa preliminar de valor, score de prontidão separado, e os limites desta estimativa.</p></li>
           </ul>
-          <p style="margin-top:2rem; max-width:640px; font-size:.78rem; line-height:1.7; color:rgba(138,136,128,.7);">Utilize valores gerenciais, ainda que aproximados. Esta ferramenta é adequada para empresas operacionais estabelecidas, com EBITDA positivo. Para outros perfis, a página final explica os próximos passos.</p>
+          <p style="margin-top:2rem; max-width:640px; font-size:.85rem; line-height:1.7; color:var(--muted-light);">Utilize valores gerenciais, ainda que aproximados. Esta ferramenta é adequada para empresas operacionais estabelecidas, com EBITDA positivo. Para outros perfis, a página final explica os próximos passos.</p>
         </div>
 
         <!-- Etapa 1 — Motivo e perfil -->
@@ -685,11 +746,7 @@
             <div style="display:flex; flex-direction:column; gap:1rem;">
               <div class="consent-block required">
                 <input type="checkbox" id="consent-tratamento" data-consent="tratamento">
-                <label for="consent-tratamento">Li a <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e concordo com o tratamento dos dados informados para geração desta estimativa. <span class="consent-required-mark">*</span></label>
-              </div>
-              <div class="consent-block">
-                <input type="checkbox" id="consent-comercial" data-consent="comercial">
-                <label for="consent-comercial">Autorizo a D&amp;M a entrar em contato para conversar sobre esta estimativa e serviços relacionados. <span style="color:var(--muted);">(opcional — você vê o resultado de qualquer forma)</span></label>
+                <label for="consent-tratamento">Li a <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e concordo com o tratamento dos dados informados para geração desta estimativa, incluindo o recebimento de contato da D&amp;M sobre este resultado. <span class="consent-required-mark">*</span></label>
               </div>
             </div>
           </div>
@@ -726,6 +783,14 @@
   </div>
 </footer>
 
+<!--
+  jsPDF + html2canvas: geração do PDF do resultado no próprio navegador
+  (sem servidor, sem build step — mesmo padrão de carregar recurso externo
+  já usado para as fontes do Google acima). Usadas para o botão "Baixar PDF"
+  e para anexar o PDF ao lead enviado à D&M.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="engine.js"></script>
 <script>
 (function () {
@@ -747,6 +812,11 @@
   ============================================================ */
   var LEAD_ENDPOINT = 'https://hooks.zapier.com/hooks/catch/28462407/46s6s2b/';
   var POLITICA_VERSAO = "2026-08-08"; // atualizar sempre que a política de privacidade mudar substancialmente
+  var WHATSAPP_NUMBER = '5519999994706'; // mesmo número usado no site institucional
+
+  function whatsappLink(mensagem) {
+    return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(mensagem);
+  }
 
   /* ---------- Estado ---------- */
   var NOMES_ETAPAS = [
@@ -773,7 +843,7 @@
     crescimentoEsperado: "", planejamento: "", projecoes: "", governanca: "",
     setor: "", tempoMercado: "", funcionarios: "", dependenciaSocio: "", concentracaoClientes: "", qualidadeContabil: "", recorrencia: "",
     nome: "", email: "", telefone: "", empresa: "", cargo: "",
-    consentTratamento: false, consentComercial: false
+    consentTratamento: false
   };
   var step = 0;
   var maxStepReached = 0;
@@ -885,7 +955,6 @@
     chk.addEventListener("change", function () {
       var key = chk.getAttribute("data-consent");
       if (key === "tratamento") form.consentTratamento = chk.checked;
-      if (key === "comercial") form.consentComercial = chk.checked;
       onFieldChange();
     });
   });
@@ -1038,12 +1107,171 @@
     return d;
   }
 
+  /* ---------- Geração de PDF (jsPDF + html2canvas) ----------
+     Renderiza o painel de resultado (já com a paleta clara de exportação)
+     como imagem e monta um PDF em A4, paginando se necessário. Usado tanto
+     pelo botão "Baixar PDF" quanto para anexar o PDF ao lead enviado à D&M. */
+  function nomeArquivoPdf() {
+    var empresa = (form.empresa || "").trim().replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase();
+    var data = new Date().toISOString().slice(0, 10);
+    return "valuation-" + (empresa || "simulacao") + "-" + data + ".pdf";
+  }
+
+  function gerarPdf() {
+    if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+      return Promise.reject(new Error("Bibliotecas de PDF não carregadas"));
+    }
+    var root = document.documentElement;
+    var target = document.getElementById("result-panel");
+    root.classList.add("pdf-export-mode");
+    // <details> fechado não é apenas "display:none" — o navegador nem faz layout do
+    // conteúdo interno, então nenhum CSS (nem !important) consegue forçá-lo visível.
+    // Precisamos abrir de verdade via JS, e devolver ao estado original no final.
+    var detalhesEls = Array.prototype.slice.call(document.querySelectorAll("details.premissas"));
+    var estadoOriginalDetalhes = detalhesEls.map(function (d) { return d.open; });
+    detalhesEls.forEach(function (d) { d.open = true; });
+
+    function restaurarDetalhes() {
+      detalhesEls.forEach(function (d, i) { d.open = estadoOriginalDetalhes[i]; });
+    }
+
+    // Página de destino (dimensões fixas, não dependem da captura) — calculadas já aqui
+    // porque precisamos saber "quantos px CSS cabem numa página" ANTES de decidir quais
+    // elementos tratar como bloco atômico.
+    var pdf = new window.jspdf.jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
+    var margin = 32;
+    var pageWidth = pdf.internal.pageSize.getWidth();
+    var pageHeight = pdf.internal.pageSize.getHeight();
+    var usableWidthPt = pageWidth - margin * 2;
+    var usableHeightPt = pageHeight - margin * 2;
+
+    return new Promise(function (resolve) { setTimeout(resolve, 100); }) // deixa o layout de exportação aplicar antes de medir/capturar
+      .then(function () {
+        // mede a posição de cada bloco e a largura do próprio elemento ENQUANTO o modo de
+        // exportação ainda está ativo — se medir depois de remover a classe, a largura volta
+        // a ser a do layout normal (mais estreita) e toda a escala de recorte fica errada.
+        var targetRect = target.getBoundingClientRect();
+        var targetWidthPx = target.offsetWidth;
+        var ptPerCssPx = usableWidthPt / targetWidthPx;
+        var maxBlockHeightPx = usableHeightPt / ptPerCssPx; // acima disso, um bloco não cabe inteiro numa página
+
+        // Normalmente cada filho direto de #result-panel (cada seção) vira um bloco.
+        // Se algum for maior que uma página inteira (ex.: "Entenda as premissas" com
+        // muito texto), descemos um nível e usamos os filhos DELE como blocos — assim
+        // nunca precisamos fatiar um bloco no meio de uma frase.
+        function coletarBlocos(el) {
+          var out = [];
+          Array.prototype.slice.call(el.children).forEach(function (child) {
+            var r = child.getBoundingClientRect();
+            var h = r.height;
+            if (h <= 0) return; // elemento oculto (ex.: nota de status vazia)
+            if (h > maxBlockHeightPx && child.children.length > 0) {
+              out = out.concat(coletarBlocos(child));
+            } else {
+              out.push({ topPx: r.top - targetRect.top, heightPx: h });
+            }
+          });
+          return out;
+        }
+
+        var blocks = coletarBlocos(target);
+        return { blocks: blocks, targetWidthPx: targetWidthPx, ptPerCssPx: ptPerCssPx };
+      })
+      .then(function (medidas) {
+        return window.html2canvas(target, { scale: 2, backgroundColor: "#0a0e0b", useCORS: true }).then(function (canvas) {
+          return { canvas: canvas, medidas: medidas };
+        });
+      })
+      .then(function (resultado) {
+        root.classList.remove("pdf-export-mode");
+        restaurarDetalhes();
+
+        var canvas = resultado.canvas;
+        var blocks = resultado.medidas.blocks;
+        var ptPerCssPx = resultado.medidas.ptPerCssPx;
+        var canvasPxPerCssPx = canvas.width / resultado.medidas.targetWidthPx; // resolução da captura (scale do html2canvas)
+        var gapPt = 22 * ptPerCssPx;
+
+        var cropCanvas = document.createElement("canvas");
+        var cropCtx = cropCanvas.getContext("2d");
+        var currentY = margin;
+
+        function desenhaFatia(sy, sh, destY, destHeightPt) {
+          cropCanvas.width = canvas.width;
+          cropCanvas.height = sh;
+          cropCtx.clearRect(0, 0, canvas.width, sh);
+          cropCtx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
+          pdf.addImage(cropCanvas.toDataURL("image/jpeg", 0.92), "JPEG", margin, destY, usableWidthPt, destHeightPt);
+        }
+
+        blocks.forEach(function (block, idx) {
+          var blockHeightPt = block.heightPx * ptPerCssPx;
+
+          // salvaguarda final: mesmo depois de descer níveis, um único elemento (ex.: um
+          // parágrafo enorme) ainda maior que uma página — melhor página quase vazia do
+          // que texto sobreposto.
+          if (blockHeightPt > usableHeightPt) {
+            if (currentY !== margin) { pdf.addPage(); currentY = margin; }
+            desenhaFatia(block.topPx * canvasPxPerCssPx, block.heightPx * canvasPxPerCssPx, currentY, blockHeightPt);
+            pdf.addPage();
+            currentY = margin;
+            return;
+          }
+
+          // bloco inteiro: só quebra página se não couber no espaço restante da página atual
+          if (currentY !== margin && currentY + blockHeightPt > pageHeight - margin) {
+            pdf.addPage();
+            currentY = margin;
+          }
+          desenhaFatia(block.topPx * canvasPxPerCssPx, block.heightPx * canvasPxPerCssPx, currentY, blockHeightPt);
+          currentY += blockHeightPt + gapPt;
+        });
+
+        return pdf;
+      })
+      .catch(function (err) {
+        root.classList.remove("pdf-export-mode");
+        restaurarDetalhes();
+        throw err;
+      });
+  }
+
+  function pdfButtonEl() {
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "action-btn ghost";
+    var textoOriginal = "Baixar PDF";
+    btn.textContent = textoOriginal;
+    btn.setAttribute("data-event", "download_pdf");
+    btn.addEventListener("click", function () {
+      btn.disabled = true; btn.textContent = "Gerando PDF...";
+      gerarPdf().then(function (pdf) {
+        pdf.save(nomeArquivoPdf());
+      }).catch(function () {
+        window.print(); // se as bibliotecas falharem ao carregar, cai para a impressão nativa
+      }).then(function () {
+        btn.disabled = false; btn.textContent = textoOriginal;
+      });
+    });
+    return btn;
+  }
+
+  function printHeaderEl() {
+    var div = document.createElement("div"); div.className = "print-header";
+    var logoSrc = document.querySelector(".header-logo img") ? document.querySelector(".header-logo img").src : "";
+    var dataHora = new Date().toLocaleString("pt-BR");
+    div.innerHTML =
+      '<img src="' + logoSrc + '" alt="D&M Consultoria Financeira"/>' +
+      '<p class="print-meta">Estimativa preliminar gerada em ' + dataHora + ' pela Calculadora de Valuation D&amp;M. Documento de caráter informativo, sem natureza de laudo de avaliação.</p>';
+    return div;
+  }
+
   function renderResult(result) {
     document.getElementById("wizard-steps").style.display = "none";
     document.getElementById("step-nav").style.display = "none";
     var panel = document.getElementById("result-panel");
     panel.classList.add("active");
     panel.innerHTML = "";
+    panel.appendChild(printHeaderEl());
 
     // ---- Perfil incompatível ou setor não suportado: nenhum número ----
     if (result.valido === false && result.motivoInvalidez === "perfil_incompativel") {
@@ -1055,7 +1283,7 @@
       p.style.maxWidth = "620px"; p.style.fontSize = ".95rem";
       secBloq.appendChild(p);
       var ctaBloq = document.createElement("a");
-      ctaBloq.href = "https://www.demconsultoriafinanceira.com/#contact-form";
+      ctaBloq.href = whatsappLink("Olá! Preenchi a Calculadora de Valuation da D&M, mas o perfil da minha empresa está fora do escopo da estimativa automática. Gostaria de conversar sobre uma avaliação específica para o meu caso.");
       ctaBloq.target = "_blank"; ctaBloq.rel = "noopener noreferrer";
       ctaBloq.className = "action-btn"; ctaBloq.style.alignSelf = "flex-start";
       ctaBloq.setAttribute("data-event", "cta_especialista"); ctaBloq.setAttribute("data-location", "valuation_bloqueado");
@@ -1066,7 +1294,10 @@
       backBtn0.style.marginTop = "1rem"; backBtn0.style.alignSelf = "flex-start";
       backBtn0.addEventListener("click", reiniciar);
       secBloq.appendChild(backBtn0);
+      var noteBloq = document.createElement("div"); noteBloq.className = "form-status-note"; noteBloq.id = "lead-status-note";
+      secBloq.appendChild(noteBloq);
       panel.appendChild(secBloq);
+      enviarLead(result);
       scrollTop();
       return;
     }
@@ -1120,7 +1351,8 @@
       s4.appendChild(h3);
       var btnRow = document.createElement("div"); btnRow.className = "btn-row";
       var cta = document.createElement("a");
-      cta.href = "https://www.demconsultoriafinanceira.com/#contact-form"; cta.target = "_blank"; cta.rel = "noopener noreferrer";
+      cta.href = whatsappLink("Olá! Preenchi a Calculadora de Valuation da D&M. O EBITDA informado ficou negativo ou nulo, então a ferramenta não gerou uma estimativa automática de valor. Gostaria de entender os próximos passos.");
+      cta.target = "_blank"; cta.rel = "noopener noreferrer";
       cta.className = "action-btn"; cta.textContent = "Conversar com um especialista";
       cta.setAttribute("data-event", "cta_especialista"); cta.setAttribute("data-location", "valuation_ebitda_negativo");
       btnRow.appendChild(cta);
@@ -1128,8 +1360,12 @@
       refazerBtn.type = "button"; refazerBtn.className = "action-btn ghost"; refazerBtn.textContent = "Refazer simulação";
       refazerBtn.addEventListener("click", reiniciar);
       btnRow.appendChild(refazerBtn);
+      btnRow.appendChild(pdfButtonEl());
       s4.appendChild(btnRow);
+      var noteEbitda = document.createElement("div"); noteEbitda.className = "form-status-note"; noteEbitda.id = "lead-status-note";
+      s4.appendChild(noteEbitda);
       panel.appendChild(s4);
+      enviarLead(result);
 
       var disc0 = document.createElement("p"); disc0.className = "disclaimer";
       disc0.textContent = disclaimerTexto();
@@ -1278,7 +1514,8 @@
     s7p.appendChild(pcta);
     var btnRow2 = document.createElement("div"); btnRow2.className = "btn-row";
     var ctaBtn = document.createElement("a");
-    ctaBtn.href = "https://www.demconsultoriafinanceira.com/#contact-form"; ctaBtn.target = "_blank"; ctaBtn.rel = "noopener noreferrer";
+    ctaBtn.href = whatsappLink("Olá! Fiz uma simulação na Calculadora de Valuation da D&M. Valor de referência: " + E.brl(result.equityBase) + " (faixa entre " + E.brl(result.equityMin) + " e " + E.brl(result.equityMax) + "). Gostaria de conversar sobre uma avaliação mais aprofundada.");
+    ctaBtn.target = "_blank"; ctaBtn.rel = "noopener noreferrer";
     ctaBtn.className = "action-btn"; ctaBtn.textContent = "Conversar com um especialista";
     ctaBtn.setAttribute("data-event", "cta_especialista"); ctaBtn.setAttribute("data-location", "valuation_resultado");
     btnRow2.appendChild(ctaBtn);
@@ -1286,8 +1523,10 @@
     refazer.type = "button"; refazer.className = "action-btn ghost"; refazer.textContent = "Refazer simulação";
     refazer.addEventListener("click", reiniciar);
     btnRow2.appendChild(refazer);
+    btnRow2.appendChild(pdfButtonEl());
     s7p.appendChild(btnRow2);
-    s7p.innerHTML += '<div class="form-status-note" id="lead-status-note"></div>';
+    var noteFull = document.createElement("div"); noteFull.className = "form-status-note"; noteFull.id = "lead-status-note";
+    s7p.appendChild(noteFull);
     panel.appendChild(s7p);
 
     var disc = document.createElement("p"); disc.className = "disclaimer";
@@ -1298,7 +1537,7 @@
     document.getElementById("progress-fill").style.width = "100%";
 
     // ---- Envio do lead: só com consentimento comercial ----
-    enviarLeadSeAutorizado(result);
+    enviarLead(result);
 
     scrollTop();
   }
@@ -1318,7 +1557,7 @@
       crescimentoEsperado: "", planejamento: "", projecoes: "", governanca: "",
       setor: "", tempoMercado: "", funcionarios: "", dependenciaSocio: "", concentracaoClientes: "", qualidadeContabil: "", recorrencia: "",
       nome: "", email: "", telefone: "", empresa: "", cargo: "",
-      consentTratamento: false, consentComercial: false
+      consentTratamento: false
     };
     leadJaEnviado = false; leadEnviando = false;
     document.querySelectorAll('.option-radio').forEach(function (r) { r.checked = false; });
@@ -1347,16 +1586,13 @@
     trackEvent(el.getAttribute("data-event"), { location: el.getAttribute("data-location") });
   });
 
-  /* ---------- Envio do lead (somente com consentimento comercial explícito) ---------- */
-  function enviarLeadSeAutorizado(result) {
+  /* ---------- Envio do lead ----------
+     Enviado sempre que o usuário conclui a simulação com o consentimento de
+     tratamento de dados aceito (obrigatório para ver qualquer resultado).
+     Não há mais um opt-in comercial separado: o próprio texto do consentimento
+     em "Sobre você" já informa que isso inclui contato da D&M. */
+  function enviarLead(result) {
     var noteEl = document.getElementById("lead-status-note");
-    if (!form.consentComercial) {
-      if (noteEl) {
-        noteEl.textContent = "Você optou por não ser contatado. Suas informações não foram enviadas a nenhum servidor. O resultado acima é seu, calculado neste navegador.";
-        noteEl.classList.add("show");
-      }
-      return;
-    }
     if (leadJaEnviado || leadEnviando) return; // proteção contra duplo clique / reenvio
     if (!LEAD_ENDPOINT) {
       if (noteEl) { noteEl.textContent = "Endpoint de envio não configurado."; noteEl.classList.add("show"); }
@@ -1364,39 +1600,64 @@
     }
     leadEnviando = true;
 
+    var setorInfo = E.getSetor(form.setor);
+    var motivoInfo = E.getMotivo(form.motivo);
+    var receitaAnualForBucket = (form.receita || 0) * (form.periodo === "mensal" ? 12 : 1);
+
+    var resumoMensagem;
+    if (result.valido === false && result.motivoInvalidez === "perfil_incompativel") {
+      resumoMensagem = "Calculadora de Valuation — Perfil fora do escopo da estimativa automática.";
+    } else if (result.semValuationAutomatico) {
+      resumoMensagem = "Calculadora de Valuation — EBITDA não positivo, sem estimativa automática. EBITDA informado: " + E.brlExato(result.ebitda);
+    } else {
+      resumoMensagem = "Calculadora de Valuation — Valor de referência: " + E.brl(result.equityBase) + " | Faixa: " + E.brl(result.equityMin) + " a " + E.brl(result.equityMax) + " | Prontidão: " + result.scoreProntidao + "/100";
+    }
+
     var payload = {
       nome: form.nome,
       empresa: form.empresa,
       cargo: form.cargo,
       email: form.email,
       whatsapp: form.telefone,
-      segmento: result.setorLabel || form.setor,
-      faturamento: result.faixaFaturamentoLabel,
-      desafio: result.motivoLabel || form.motivo,
-      mensagem: "Calculadora de Valuation — Valor de referência: " + E.brl(result.equityBase) + " | Faixa: " + E.brl(result.equityMin) + " a " + E.brl(result.equityMax) + " | Prontidão: " + result.scoreProntidao + "/100",
-      consentimento_comercial: true,
+      segmento: setorInfo ? setorInfo.label : form.setor,
+      faturamento: result.faixaFaturamentoLabel || E.bucketFaturamento(receitaAnualForBucket),
+      desafio: motivoInfo ? motivoInfo.label : form.motivo,
+      mensagem: resumoMensagem,
+      consentimento_tratamento: true,
       consentimento_data: new Date().toISOString(),
       origem: "calculadora_valuation",
       versao_politica: POLITICA_VERSAO
     };
 
-    trackEvent("valuation_lead_submit", { location: "valuation" });
-
-    fetch(LEAD_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    }).then(function (res) {
-      leadEnviando = false;
-      if (res && res.ok) {
-        leadJaEnviado = true;
-        if (noteEl) { noteEl.textContent = "Recebemos suas informações. Nossa equipe pode entrar em contato para aprofundar esta conversa."; noteEl.classList.add("show"); noteEl.classList.remove("error"); }
-      } else {
+    function postPayload() {
+      trackEvent("valuation_lead_submit", { location: "valuation" });
+      fetch(LEAD_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        leadEnviando = false;
+        if (res && res.ok) {
+          leadJaEnviado = true;
+          if (noteEl) { noteEl.textContent = "Recebemos suas informações. Nossa equipe pode entrar em contato para aprofundar esta conversa."; noteEl.classList.add("show"); noteEl.classList.remove("error"); }
+        } else {
+          if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
+        }
+      }).catch(function () {
+        leadEnviando = false;
         if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
-      }
+      });
+    }
+
+    // Anexa o PDF da simulação em base64, quando possível. Se a geração falhar
+    // por qualquer motivo (ex.: bibliotecas de PDF fora do ar), o lead ainda
+    // é enviado normalmente, só que sem o arquivo anexado.
+    gerarPdf().then(function (pdf) {
+      payload.pdf_base64 = pdf.output("datauristring");
+      payload.pdf_filename = nomeArquivoPdf();
+      postPayload();
     }).catch(function () {
-      leadEnviando = false;
-      if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
+      postPayload();
     });
   }
 
