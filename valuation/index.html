@@ -1,1 +1,1338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+  <title>Calculadora de Valuation | D&amp;M Consultoria Financeira</title>
+  <meta name="description" content="Estime o valor econômico da sua empresa com método: múltiplos setoriais de EV/EBITDA ajustados por risco e fluxo de caixa descontado. Gratuito, em cinco minutos.">
+  <link rel="canonical" href="https://www.demconsultoriafinanceira.com/valuation/">
+  <link rel="icon" type="image/png" href="/icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="D&amp;M Consultoria Financeira">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Calculadora de Valuation | D&amp;M Consultoria Financeira">
+  <meta property="og:description" content="Estime o valor econômico da sua empresa com método: múltiplos setoriais de EV/EBITDA ajustados por risco e fluxo de caixa descontado. Gratuito, em cinco minutos.">
+  <meta property="og:url" content="https://www.demconsultoriafinanceira.com/valuation/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Calculadora de Valuation D&M",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Estime o valor econômico da sua empresa com método: múltiplos setoriais de EV/EBITDA ajustados por risco e fluxo de caixa descontado.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+    "provider": { "@type": "Organization", "name": "D&M Consultoria Financeira", "url": "https://www.demconsultoriafinanceira.com/" }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  :root {
+    --background: #0a0e0b;
+    --foreground: #f5f3ee;
+    --surface: #0f1a12;
+    --surface-raised: #123324;
+    --gold: #cfa96e;
+    --gold-deep: #b8945a;
+    --emerald-deep: #082c20;
+    --muted: #8a8880;
+    --border: rgba(255,255,255,.09);
+    --border-strong: rgba(255,255,255,.18);
+    --destructive: #c1795a;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    background: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .skip-link {
+    position: absolute; top: -80px; left: 12px; z-index: 1000;
+    background: var(--gold); color: var(--background); text-decoration: none;
+    padding: 12px 22px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    transition: top .2s ease;
+  }
+  .skip-link:focus { top: 12px; }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--gold); outline-offset: 3px;
+  }
+
+  h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; font-weight: 400; }
+
+  .eyebrow {
+    font-size: .6875rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: var(--gold);
+  }
+  .gold-rule { background: linear-gradient(to right, var(--gold) 0%, rgba(207,169,110,.3) 60%, transparent 100%); }
+  .grid-backdrop {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 96px 96px;
+  }
+
+  /* ---------- Header ---------- */
+  header.site-header {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(10,14,11,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1240px; margin: 0 auto; padding: 20px 6%;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  }
+  .header-logo { display: flex; align-items: baseline; gap: .5rem; text-decoration: none; }
+  .header-logo .wordmark { font-family: 'Playfair Display', serif; font-size: 1.25rem; letter-spacing: -.01em; color: var(--foreground); }
+  .header-logo .tagline { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .header-nav { display: flex; align-items: center; gap: 2rem; }
+  .header-nav .tool-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .header-nav .contato-link {
+    border-bottom: 1px solid var(--gold); padding-bottom: 2px;
+    font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+    text-decoration: none; transition: opacity .2s;
+  }
+  .header-nav .contato-link:hover { opacity: .7; }
+  @media (max-width: 640px) { .header-logo .tagline, .header-nav .tool-label { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero-band { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .hero-bg-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 90% at 12% 0%, var(--emerald-deep) 0%, transparent 62%);
+    opacity: .55;
+  }
+  .hero-inner {
+    position: relative; max-width: 1240px; margin: 0 auto; padding: 80px 6% 64px;
+  }
+  .hero-inner h1 {
+    margin-top: 2rem; max-width: 900px;
+    font-size: clamp(2.6rem, 6vw, 4.2rem); line-height: 1.08; letter-spacing: -.02em; color: var(--foreground);
+  }
+  .hero-inner h1 em { font-style: italic; color: var(--gold); }
+  .hero-inner p.lead { margin-top: 2rem; max-width: 540px; font-size: .95rem; line-height: 1.75; color: var(--muted); }
+
+  /* ---------- Wizard layout ---------- */
+  main { max-width: 1240px; margin: 0 auto; padding: 80px 6% 96px; }
+  .wizard-grid { display: grid; gap: 3.5rem; grid-template-columns: 280px 1fr; }
+  @media (max-width: 1024px) { .wizard-grid { grid-template-columns: 1fr; gap: 3rem; } }
+
+  .wizard-aside { align-self: start; }
+  @media (min-width: 1025px) { .wizard-aside { position: sticky; top: 7rem; } }
+  .progress-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .progress-pct { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--gold); }
+  .progress-track { margin-top: .75rem; height: 2px; width: 100%; background: var(--border-strong); }
+  .progress-fill { height: 100%; background: var(--gold); transition: width .4s ease; }
+
+  .trilha { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.75rem; }
+  .trilha-bloco-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .trilha-steps { list-style: none; margin-top: .75rem; display: flex; flex-direction: column; gap: .5rem; padding-left: 1rem; border-left: 1px solid var(--border); }
+  .trilha-steps button {
+    background: none; border: none; padding: 0; text-align: left; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: .875rem; color: var(--muted); transition: color .2s;
+  }
+  .trilha-steps button:disabled { cursor: default; color: rgba(138,136,128,.45); }
+  .trilha-steps button.done { color: rgba(245,243,238,.7); }
+  .trilha-steps button.done:hover:not(:disabled) { color: var(--foreground); }
+  .trilha-steps button.current { color: var(--gold); }
+
+  .wizard-content { min-width: 0; }
+  .wizard-step { display: none; }
+  .wizard-step.active { display: block; }
+
+  .step-heading { margin-bottom: 3rem; }
+  .step-heading h2 {
+    margin-top: 1.25rem; max-width: 640px;
+    font-size: clamp(1.7rem, 3vw, 2.6rem); line-height: 1.15; letter-spacing: -.01em; color: var(--foreground);
+  }
+  .step-heading h2 em { font-style: italic; color: var(--gold); }
+  .step-heading p.desc { margin-top: 1.1rem; max-width: 640px; font-size: .92rem; line-height: 1.7; color: var(--muted); }
+
+  .step-body { display: flex; flex-direction: column; gap: 3rem; }
+
+  .field-label { display: block; margin-bottom: .9rem; }
+  .field-label .txt { display: block; font-size: .7rem; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .field-label .hint { display: block; margin-top: .3rem; font-size: .75rem; color: rgba(138,136,128,.7); }
+
+  fieldset { border: none; }
+  legend { padding: 0; width: 100%; }
+
+  .option-grid { display: grid; grid-template-columns: 1fr; gap: .5rem; }
+  @media (min-width: 640px) {
+    .option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .option-radio { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .option-card {
+    display: flex; align-items: flex-start; gap: .75rem;
+    border: 1px solid var(--border); background: rgba(15,26,18,.6);
+    padding: 14px 16px; cursor: pointer; transition: all .2s;
+  }
+  .option-card:hover { border-color: var(--border-strong); background: var(--surface); }
+  .option-radio:checked + .option-card { border-color: var(--gold); background: var(--surface-raised); }
+  .option-radio:focus-visible + .option-card { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .option-dot { margin-top: 3px; width: 10px; height: 10px; flex-shrink: 0; border: 1px solid var(--border-strong); background: transparent; transition: all .2s; }
+  .option-radio:checked + .option-card .option-dot { border-color: var(--gold); background: var(--gold); }
+  .option-card .option-text { display: flex; flex-direction: column; gap: .25rem; }
+  .option-card .option-label { font-size: .875rem; line-height: 1.4; color: rgba(245,243,238,.8); }
+  .option-radio:checked + .option-card .option-label { color: var(--foreground); }
+  .option-card .option-hint { font-size: .75rem; color: var(--muted); }
+
+  .money-field, .text-field { display: block; }
+  .money-box {
+    display: flex; align-items: stretch; border: 1px solid var(--border); background: rgba(15,26,18,.6); transition: border-color .2s;
+  }
+  .money-box:focus-within { border-color: var(--gold); }
+  .money-prefix { display: flex; align-items: center; border-right: 1px solid var(--border); padding: 0 .9rem; font-size: .75rem; letter-spacing: .05em; color: var(--muted); }
+  .money-box input {
+    width: 100%; background: transparent; border: none; outline: none;
+    padding: .8rem .9rem; text-align: right; font-family: 'Inter', sans-serif; font-size: 1rem;
+    color: var(--foreground); font-variant-numeric: tabular-nums;
+  }
+  .money-box input::placeholder { color: rgba(138,136,128,.4); }
+
+  .text-field input {
+    width: 100%; border: 1px solid var(--border); background: rgba(15,26,18,.6);
+    padding: .8rem .9rem; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--foreground);
+    outline: none; transition: border-color .2s;
+  }
+  .text-field input:focus { border-color: var(--gold); }
+  .text-field input::placeholder { color: rgba(138,136,128,.4); }
+
+  .field-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 640px) { .field-grid.cols-2 { grid-template-columns: 1fr 1fr; } }
+
+  .ebitda-preview {
+    display: flex; flex-wrap: wrap; gap: 2.5rem;
+    border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 1.25rem 1.5rem;
+  }
+  .ebitda-preview .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .ebitda-preview .val { margin-top: .3rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: var(--gold); }
+  .ebitda-preview .val.alt { color: rgba(245,243,238,.85); }
+
+  .action-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .75rem;
+    border: 1px solid var(--gold); background: var(--gold); color: var(--background);
+    padding: 14px 28px; font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 500;
+    letter-spacing: .2em; text-transform: uppercase; text-decoration: none; cursor: pointer;
+    transition: all .2s;
+  }
+  .action-btn:hover:not(:disabled) { background: var(--gold-deep); border-color: var(--gold-deep); }
+  .action-btn:disabled { cursor: not-allowed; opacity: .35; }
+  .action-btn.ghost { background: transparent; border-color: var(--border-strong); color: rgba(245,243,238,.8); }
+  .action-btn.ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; border-top: 1px solid var(--border); padding-top: 2.25rem; }
+  .step-nav .hint { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(138,136,128,.7); }
+
+  /* ---------- Result panel ---------- */
+  #result-panel { display: none; flex-direction: column; gap: 3.5rem; }
+  #result-panel.active { display: flex; }
+  .result-section { display: flex; flex-direction: column; gap: 1.5rem; }
+  .result-section h2 {
+    max-width: 780px; font-size: clamp(1.7rem, 3vw, 2.6rem); line-height: 1.15; letter-spacing: -.01em;
+  }
+  .result-section h2 em { font-style: italic; color: var(--gold); }
+  .result-section > p { max-width: 640px; font-size: .9rem; line-height: 1.75; color: var(--muted); }
+  .result-section > p strong { font-weight: 500; color: rgba(245,243,238,.9); }
+
+  .faixa-panel { border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 2rem; }
+  @media (min-width: 768px) { .faixa-panel { padding: 2.5rem; } }
+  .faixa-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
+  .faixa-item .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .faixa-item .val { margin-top: .5rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: rgba(245,243,238,.8); }
+  .faixa-item.center { text-align: center; }
+  .faixa-item.right { text-align: right; }
+  .faixa-item.center .val { font-size: clamp(2rem, 4vw, 2.75rem); color: var(--gold); }
+  .faixa-ruler { position: relative; margin-top: 2.25rem; height: 3px; width: 100%; background: var(--border-strong); }
+  .faixa-ruler .rule-fill { position: absolute; inset: 0; opacity: .6; }
+  .faixa-ruler .marker { position: absolute; top: -7px; width: 2px; height: 16px; background: var(--gold); }
+  .faixa-note { margin-top: 1.25rem; font-size: .78rem; line-height: 1.7; color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: 1fr; gap: 2rem 2.5rem; }
+  @media (min-width: 640px) { .metric-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .metric-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .metric { border-top: 1px solid var(--border); padding-top: 1rem; }
+  .metric .lbl { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .metric .val { margin-top: .5rem; font-size: 1.25rem; font-variant-numeric: tabular-nums; color: var(--foreground); }
+  .metric .note { margin-top: .25rem; font-size: .75rem; color: var(--muted); }
+
+  .score-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1rem; }
+  .score-row .num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .score-row .of { font-size: .9rem; color: var(--muted); }
+  .pilares-list { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .pilar-row { display: flex; align-items: center; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid var(--border); }
+  .pilar-row:first-child { border-top: none; }
+  .pilar-row .p-label { width: 14rem; flex-shrink: 0; font-size: .875rem; color: rgba(245,243,238,.85); }
+  .pilar-row .p-track { flex: 1; height: 2px; background: var(--border-strong); }
+  .pilar-row .p-fill { height: 100%; background: var(--gold); }
+  .pilar-row .p-nota { width: 8rem; flex-shrink: 0; text-align: right; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+  .fatores-grid { display: grid; grid-template-columns: 1fr; gap: 2rem 2.5rem; }
+  @media (min-width: 640px) { .fatores-grid { grid-template-columns: 1fr 1fr; } }
+  .fator-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: .75rem; }
+  .fator-row .f-label { font-size: .875rem; color: rgba(245,243,238,.8); }
+  .fator-row .f-delta { flex-shrink: 0; font-size: .875rem; font-variant-numeric: tabular-nums; }
+  .fator-row .f-delta.pos { color: var(--gold); }
+  .fator-row .f-delta.neg { color: var(--destructive); }
+
+  .alertas-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; }
+  .alertas-list li { display: flex; gap: 1rem; border-left: 1px solid rgba(207,169,110,.4); padding-left: 1.25rem; }
+  .alertas-list p { font-size: .875rem; line-height: 1.7; color: var(--muted); }
+
+  .cta-panel { border: 1px solid var(--border-strong); background: rgba(8,44,32,.4); padding: 2rem; }
+  @media (min-width: 768px) { .cta-panel { padding: 3rem; } }
+  .cta-panel h3 { margin-top: 1.5rem; max-width: 640px; font-size: clamp(1.4rem, 2.5vw, 2rem); line-height: 1.3; letter-spacing: -.01em; }
+  .cta-panel h3 em { font-style: italic; color: var(--gold); }
+  .cta-panel > p { margin-top: 1.25rem; max-width: 640px; font-size: .875rem; line-height: 1.7; color: var(--muted); }
+  .cta-panel .btn-row { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+
+  .disclaimer { border-top: 1px solid var(--border); padding-top: 2rem; font-size: .75rem; line-height: 1.7; color: rgba(138,136,128,.7); }
+
+  .form-status-note { display: none; margin-top: 1rem; font-size: .8rem; line-height: 1.7; color: var(--muted); border: 1px solid var(--border); background: rgba(15,26,18,.6); padding: 1rem 1.25rem; }
+  .form-status-note.show { display: block; }
+
+  /* ---------- Footer ---------- */
+  footer.site-footer { border-top: 1px solid var(--border); }
+  .footer-inner { max-width: 1240px; margin: 0 auto; padding: 3.5rem 6%; }
+  .footer-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 2.5rem; }
+  .footer-brand { max-width: 420px; }
+  .footer-brand .wordmark { font-family: 'Playfair Display', serif; font-size: 1.25rem; }
+  .footer-brand p { margin-top: 1rem; font-size: .875rem; line-height: 1.7; color: var(--muted); }
+  .footer-link-label { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: .5rem; display: block; }
+  .footer-top a.site-link { font-size: .875rem; color: rgba(245,243,238,.8); text-decoration: none; transition: color .2s; }
+  .footer-top a.site-link:hover { color: var(--gold); }
+  .footer-bottom { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; font-size: .75rem; color: rgba(138,136,128,.6); }
+
+  @media (max-width: 640px) {
+    .pilar-row { flex-wrap: wrap; gap: .5rem 1rem; }
+    .pilar-row .p-label { width: 100%; }
+    .pilar-row .p-track { flex: 1 1 auto; }
+    .pilar-row .p-nota { width: auto; text-align: left; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="https://www.demconsultoriafinanceira.com/" class="header-logo">
+      <span class="wordmark">D&amp;M</span>
+      <span class="tagline">Consultoria Financeira</span>
+    </a>
+    <nav class="header-nav">
+      <span class="tool-label">Calculadora de Valuation</span>
+      <a href="https://www.demconsultoriafinanceira.com/#contact-form" class="contato-link">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero-band">
+  <div class="grid-backdrop" style="position:absolute; inset:0; opacity:.7;"></div>
+  <div class="hero-bg-radial"></div>
+  <div class="hero-inner">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <span class="gold-rule" style="display:block; width:32px; height:1px;"></span>
+      <span class="eyebrow">Ferramenta técnica gratuita</span>
+    </div>
+    <h1>Valuation não é opinião,<br/><em>é cálculo estruturado.</em></h1>
+    <p class="lead">Uma estimativa preliminar do valor econômico da sua empresa, construída sobre a mesma base metodológica que a D&amp;M aplica em avaliações formais.</p>
+  </div>
+</section>
+
+<main id="main-content">
+  <div class="wizard-grid">
+    <aside class="wizard-aside">
+      <div class="progress-row">
+        <span class="eyebrow">Progresso</span>
+        <span class="progress-pct" id="progress-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+      <ol class="trilha" id="trilha"></ol>
+    </aside>
+
+    <div class="wizard-content">
+      <div id="wizard-steps">
+
+        <!-- Etapa 0 -->
+        <div class="wizard-step active" data-step="0">
+          <div class="step-heading">
+            <div class="eyebrow-row" style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Antes de começar</span></div>
+            <h2>Quanto vale, tecnicamente,<br/><em>a sua empresa?</em></h2>
+            <p class="desc">Esta calculadora aplica a mesma lógica que a D&amp;M utiliza em avaliações econômicas: múltiplos setoriais de EV/EBITDA ajustados por risco, cruzados com fluxo de caixa descontado, e a ponte até o valor atribuível aos sócios. O preenchimento leva cerca de cinco minutos.</p>
+          </div>
+          <ul style="list-style:none; display:grid; gap:1.5rem; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:2rem 0;" class="intro-cols">
+            <li><p class="eyebrow">Método</p><p style="margin-top:.5rem;font-size:.875rem;line-height:1.7;color:var(--muted);">Múltiplos de mercado e FCD com premissas explícitas, sem caixa-preta.</p></li>
+            <li><p class="eyebrow">Critério</p><p style="margin-top:.5rem;font-size:.875rem;line-height:1.7;color:var(--muted);">Onze fatores de ajuste: margem, porte, governança, dependência do sócio.</p></li>
+            <li><p class="eyebrow">Leitura</p><p style="margin-top:.5rem;font-size:.875rem;line-height:1.7;color:var(--muted);">Faixa de valor, score de prontidão e os pontos que consomem valor.</p></li>
+          </ul>
+          <p style="margin-top:2rem; max-width:640px; font-size:.78rem; line-height:1.7; color:rgba(138,136,128,.7);">Utilize valores gerenciais, ainda que aproximados. A consistência das informações determina diretamente a precisão da faixa apresentada ao final.</p>
+        </div>
+
+        <!-- Etapa 1 -->
+        <div class="wizard-step" data-step="1">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Financeiro · Motivo</span></div>
+            <h2>Por que você decidiu avaliar a sua empresa?</h2>
+            <p class="desc">O motivo da avaliação define a perspectiva de leitura do resultado — venda, captação ou gestão exigem ênfases distintas.</p>
+          </div>
+          <div class="step-body">
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Motivo da avaliação</span></span></legend>
+              <div class="option-grid cols-2" data-group="motivo"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Período dos valores financeiros</span><span class="hint">Os valores que você informará a seguir correspondem a um período mensal ou anual?</span></span></legend>
+              <div class="option-grid cols-2" data-group="periodo"></div>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Etapa 2 -->
+        <div class="wizard-step" data-step="2">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Financeiro · Resultados</span></div>
+            <h2>Resultado operacional</h2>
+            <p class="desc" id="step2-desc">Informe os valores em base, conforme selecionado na etapa anterior. O EBITDA é calculado automaticamente.</p>
+          </div>
+          <div class="step-body">
+            <div class="field-grid cols-2">
+              <label class="money-field"><span class="field-label"><span class="txt" id="lbl-receita">Receita bruta</span><span class="hint">Faturamento total antes de deduções</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="receita"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt" id="lbl-cmv">Custos diretos / CMV</span><span class="hint">Custo da mercadoria ou do serviço prestado</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="cmv"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt" id="lbl-despesas">Despesas operacionais</span><span class="hint">Administrativas, comerciais, pessoal e impostos sobre a receita</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="despesas"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt" id="lbl-depreciacao">Depreciação e amortização</span><span class="hint">Se não houver controle, deixe em zero</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="depreciacao"></span>
+              </label>
+            </div>
+
+            <div class="ebitda-preview" id="ebitda-preview" style="display:none;">
+              <div><p class="lbl" id="ebitda-preview-label">EBITDA</p><p class="val" id="ebitda-preview-val">R$ 0</p></div>
+              <div><p class="lbl">Margem EBITDA</p><p class="val alt" id="ebitda-preview-margem">0%</p></div>
+            </div>
+
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Trajetória de receita nos últimos três anos</span></span></legend>
+              <div class="option-grid cols-3" data-group="crescimento"></div>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Etapa 3 -->
+        <div class="wizard-step" data-step="3">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Financeiro · Ativos</span></div>
+            <h2>Ativos da operação</h2>
+            <p class="desc">Saldos atuais, em valores absolutos. Estes dados sustentam o piso patrimonial do cenário conservador.</p>
+          </div>
+          <div class="step-body">
+            <div class="field-grid cols-2">
+              <label class="money-field"><span class="field-label"><span class="txt">Imobilizado</span><span class="hint">Máquinas, veículos, benfeitorias e equipamentos</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="imobilizado"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt">Estoques</span><span class="hint">Mercadorias, insumos e produtos acabados</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="estoque"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt">Contas a receber</span><span class="hint">Recebíveis de clientes ainda não liquidados</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="contasReceber"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt">Caixa e aplicações</span><span class="hint">Disponibilidades imediatas e investimentos de liquidez</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="caixa"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Etapa 4 -->
+        <div class="wizard-step" data-step="4">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Financeiro · Passivos</span></div>
+            <h2>Obrigações e endividamento</h2>
+            <p class="desc">A dívida líquida é o que separa o valor da operação do valor efetivamente atribuível aos sócios.</p>
+          </div>
+          <div class="step-body">
+            <div class="field-grid cols-2">
+              <label class="money-field"><span class="field-label"><span class="txt">Dívidas bancárias</span><span class="hint">Empréstimos, financiamentos e antecipações</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="dividasBancarias"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt">Contas a pagar</span><span class="hint">Fornecedores e obrigações operacionais</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="contasPagar"></span>
+              </label>
+              <label class="money-field"><span class="field-label"><span class="txt">Passivos fiscais e trabalhistas</span><span class="hint">Parcelamentos, contingências e passivos em discussão</span></span>
+                <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="passivosFiscais"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Etapa 5 -->
+        <div class="wizard-step" data-step="5">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Perfil · Planejamento</span></div>
+            <h2>Planejamento estratégico e governança</h2>
+            <p class="desc">Empresas com método são avaliadas com prêmio. A ausência de estrutura decisória é lida pelo mercado como risco.</p>
+          </div>
+          <div class="step-body">
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Planejamento e orçamento</span></span></legend>
+              <div class="option-grid" data-group="planejamento"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Projeções financeiras</span></span></legend>
+              <div class="option-grid" data-group="projecoes"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Estrutura de governança</span></span></legend>
+              <div class="option-grid" data-group="governanca"></div>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Etapa 6 -->
+        <div class="wizard-step" data-step="6">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Perfil · Empresa</span></div>
+            <h2>Sobre a empresa</h2>
+            <p class="desc">Setor, maturidade e qualidade da receita determinam o múltiplo de referência e o prêmio de risco aplicado.</p>
+          </div>
+          <div class="step-body">
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Setor de atuação</span></span></legend>
+              <div class="option-grid cols-2" data-group="setor"></div>
+            </fieldset>
+            <div class="field-grid cols-2">
+              <fieldset>
+                <legend><span class="field-label"><span class="txt">Tempo de mercado</span></span></legend>
+                <div class="option-grid" data-group="tempoMercado"></div>
+              </fieldset>
+              <fieldset>
+                <legend><span class="field-label"><span class="txt">Número de colaboradores</span></span></legend>
+                <div class="option-grid" data-group="funcionarios"></div>
+              </fieldset>
+            </div>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Dependência da figura do sócio</span></span></legend>
+              <div class="option-grid" data-group="dependenciaSocio"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Concentração da receita em clientes</span></span></legend>
+              <div class="option-grid" data-group="concentracaoClientes"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Qualidade da informação financeira</span></span></legend>
+              <div class="option-grid" data-group="qualidadeContabil"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="field-label"><span class="txt">Natureza da receita</span></span></legend>
+              <div class="option-grid" data-group="recorrencia"></div>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Etapa 7 -->
+        <div class="wizard-step" data-step="7">
+          <div class="step-heading">
+            <div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Perfil · Contato</span></div>
+            <h2>Sobre você</h2>
+            <p class="desc">Identifique-se para liberar o resultado. Utilizamos seus dados exclusivamente para apresentar a avaliação e, caso deseje, aprofundar a análise.</p>
+          </div>
+          <div class="step-body">
+            <div class="field-grid cols-2">
+              <label class="text-field"><span class="field-label"><span class="txt">Nome completo</span></span><input type="text" placeholder="Seu nome" data-text="nome" autocomplete="name"></label>
+              <label class="text-field"><span class="field-label"><span class="txt">E-mail corporativo</span></span><input type="email" placeholder="nome@empresa.com.br" data-text="email" autocomplete="email"></label>
+              <label class="text-field"><span class="field-label"><span class="txt">Telefone / WhatsApp</span></span><input type="tel" placeholder="(00) 00000-0000" maxlength="20" data-text="telefone" autocomplete="tel"></label>
+              <label class="text-field"><span class="field-label"><span class="txt">Empresa</span></span><input type="text" placeholder="Razão social ou nome fantasia" data-text="empresa" autocomplete="organization"></label>
+              <label class="text-field"><span class="field-label"><span class="txt">Cargo</span><span class="hint">Opcional</span></span><input type="text" placeholder="Sócio, diretor, CFO" data-text="cargo" autocomplete="organization-title"></label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Navegação -->
+      <div class="step-nav" id="step-nav">
+        <button type="button" class="action-btn ghost" id="btn-voltar" style="display:none;">Voltar</button>
+        <button type="button" class="action-btn" id="btn-avancar">Avançar</button>
+        <span class="hint" id="step-hint" aria-live="polite"></span>
+      </div>
+
+      <!-- Resultado -->
+      <div id="result-panel"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="wordmark">D&amp;M</span>
+        <p>Consultoria financeira estratégica para empresas estabelecidas. Estrutura antes de decisão.</p>
+      </div>
+      <div>
+        <span class="footer-link-label">Site institucional</span>
+        <a href="https://www.demconsultoriafinanceira.com/" class="site-link">demconsultoriafinanceira.com</a>
+      </div>
+    </div>
+    <p class="footer-bottom">© <span id="foot-year">2026</span> D&amp;M Consultoria Financeira. Estimativa de caráter informativo, sem natureza de laudo de avaliação.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     CONFIGURAÇÃO
+     ============================================================
+     Reaproveita o MESMO webhook do Zapier já configurado para o
+     formulário do site institucional (ver index.html principal).
+     O payload usa os mesmos nomes de campo (nome, empresa, cargo,
+     email, whatsapp, segmento, faturamento, desafio, mensagem),
+     então cai automaticamente no mesmo board do Monday.com sem
+     nenhuma configuração adicional no Zapier.
+  ============================================================ */
+  var LEAD_ENDPOINT = 'https://hooks.zapier.com/hooks/catch/28462407/46s6s2b/';
+
+  /* ---------- Motor de cálculo (porte de src/lib/valuation.ts) ---------- */
+  var MOTIVOS = [
+    { value: "venda_total", label: "Vender totalmente", hint: "Alienação integral do controle" },
+    { value: "venda_parcial", label: "Vender parcialmente", hint: "Sócio investidor ou saída parcial" },
+    { value: "captar", label: "Captar investimento", hint: "Rodada de capital para crescimento" },
+    { value: "societario", label: "Movimento societário", hint: "Entrada, saída ou sucessão de sócios" },
+    { value: "gestao", label: "Gestão baseada em valor", hint: "Acompanhar a criação de valor" }
+  ];
+
+  var SETORES = [
+    { value: "tecnologia", label: "Tecnologia / SaaS", multiplo: 8.0, margemRef: 0.25 },
+    { value: "saude", label: "Saúde e clínicas", multiplo: 7.0, margemRef: 0.22 },
+    { value: "energia", label: "Energia e infraestrutura", multiplo: 7.0, margemRef: 0.30 },
+    { value: "financeiro", label: "Serviços financeiros", multiplo: 6.5, margemRef: 0.28 },
+    { value: "educacao", label: "Educação", multiplo: 6.0, margemRef: 0.20 },
+    { value: "servicos", label: "Serviços B2B", multiplo: 5.5, margemRef: 0.18 },
+    { value: "industria", label: "Indústria e manufatura", multiplo: 5.5, margemRef: 0.15 },
+    { value: "agro", label: "Agronegócio", multiplo: 5.5, margemRef: 0.18 },
+    { value: "logistica", label: "Logística e transporte", multiplo: 5.0, margemRef: 0.14 },
+    { value: "atacado", label: "Comércio atacadista", multiplo: 4.5, margemRef: 0.09 },
+    { value: "varejo", label: "Varejo", multiplo: 4.5, margemRef: 0.09 },
+    { value: "construcao", label: "Construção e incorporação", multiplo: 4.5, margemRef: 0.13 },
+    { value: "alimentacao", label: "Alimentação e food service", multiplo: 4.0, margemRef: 0.12 },
+    { value: "outros", label: "Outro segmento", multiplo: 5.0, margemRef: 0.15 }
+  ];
+
+  var CRESCIMENTO = [
+    { value: "queda", label: "Em queda", fator: 0.78, g: -0.02 },
+    { value: "estavel", label: "Estável (0% a 5%)", fator: 0.92, g: 0.03 },
+    { value: "moderado", label: "Moderado (5% a 15%)", fator: 1.00, g: 0.09 },
+    { value: "forte", label: "Forte (15% a 30%)", fator: 1.12, g: 0.20 },
+    { value: "acelerado", label: "Acelerado (acima de 30%)", fator: 1.24, g: 0.32 }
+  ];
+
+  var F = {
+    planejamento: {
+      nao: { fator: 0.94, risco: 0.012, score: 20 },
+      informal: { fator: 0.99, risco: 0.005, score: 50 },
+      estruturado: { fator: 1.06, risco: -0.008, score: 95 }
+    },
+    projecoes: {
+      nao: { fator: 0.95, risco: 0.010, score: 20 },
+      simples: { fator: 1.00, risco: 0.003, score: 55 },
+      completo: { fator: 1.05, risco: -0.007, score: 95 }
+    },
+    governanca: {
+      nao: { fator: 0.94, risco: 0.012, score: 15 },
+      parcial: { fator: 1.00, risco: 0.004, score: 55 },
+      conselho: { fator: 1.07, risco: -0.010, score: 95 }
+    },
+    dependenciaSocio: {
+      alta: { fator: 0.80, risco: 0.025, score: 15 },
+      media: { fator: 0.93, risco: 0.010, score: 55 },
+      baixa: { fator: 1.06, risco: -0.010, score: 95 }
+    },
+    concentracaoClientes: {
+      alta: { fator: 0.85, risco: 0.020, score: 20 },
+      media: { fator: 0.96, risco: 0.007, score: 60 },
+      baixa: { fator: 1.04, risco: -0.006, score: 95 }
+    },
+    qualidadeContabil: {
+      informal: { fator: 0.86, risco: 0.030, score: 15 },
+      parcial: { fator: 0.96, risco: 0.010, score: 55 },
+      auditada: { fator: 1.06, risco: -0.012, score: 95 }
+    },
+    recorrencia: {
+      baixa: { fator: 0.93, risco: 0.012, score: 30 },
+      media: { fator: 1.00, risco: 0.002, score: 60 },
+      alta: { fator: 1.09, risco: -0.010, score: 95 }
+    },
+    tempoMercado: {
+      novo: { fator: 0.88, risco: 0.020, score: 30 },
+      consolidando: { fator: 0.98, risco: 0.006, score: 60 },
+      maduro: { fator: 1.05, risco: -0.008, score: 90 }
+    }
+  };
+
+  var OPCOES = {
+    periodo: [
+      { value: "mensal", label: "Mensal" },
+      { value: "anual", label: "Anual" }
+    ],
+    planejamento: [
+      { value: "nao", label: "Não existe planejamento formal" },
+      { value: "informal", label: "Existe, porém informal" },
+      { value: "estruturado", label: "Planejamento e orçamento estruturados" }
+    ],
+    projecoes: [
+      { value: "nao", label: "Não há projeções financeiras" },
+      { value: "simples", label: "Projeções simples de faturamento" },
+      { value: "completo", label: "Projeções de resultado e caixa integradas" }
+    ],
+    governanca: [
+      { value: "nao", label: "Decisões centralizadas no sócio" },
+      { value: "parcial", label: "Gestores com autonomia parcial" },
+      { value: "conselho", label: "Governança formal / conselho consultivo" }
+    ],
+    dependenciaSocio: [
+      { value: "alta", label: "Alta — a operação para sem o sócio" },
+      { value: "media", label: "Média — o sócio decide, a equipe executa" },
+      { value: "baixa", label: "Baixa — gestão profissionalizada" }
+    ],
+    concentracaoClientes: [
+      { value: "alta", label: "Acima de 50% em poucos clientes" },
+      { value: "media", label: "Entre 20% e 50%" },
+      { value: "baixa", label: "Abaixo de 20% — carteira pulverizada" }
+    ],
+    qualidadeContabil: [
+      { value: "informal", label: "Controles informais / planilhas" },
+      { value: "parcial", label: "Contabilidade regular, sem gerencial" },
+      { value: "auditada", label: "Demonstrações gerenciais consistentes" }
+    ],
+    recorrencia: [
+      { value: "baixa", label: "Receita pontual, por projeto ou transação" },
+      { value: "media", label: "Parte da receita se repete" },
+      { value: "alta", label: "Receita recorrente / contratos de longo prazo" }
+    ],
+    tempoMercado: [
+      { value: "novo", label: "Menos de 3 anos" },
+      { value: "consolidando", label: "Entre 3 e 10 anos" },
+      { value: "maduro", label: "Mais de 10 anos" }
+    ],
+    funcionarios: [
+      { value: "ate10", label: "Até 10" },
+      { value: "de11a50", label: "11 a 50" },
+      { value: "de51a200", label: "51 a 200" },
+      { value: "mais200", label: "Mais de 200" }
+    ]
+  };
+
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+
+  function q(cat, key) {
+    var table = F[cat];
+    return table[key] || table[Object.keys(table)[1]];
+  }
+
+  function vazio(receitaAnual, patrimonioAjustado, dividaLiquida) {
+    return {
+      valido: false, mensagem: null, receitaAnual: receitaAnual, ebitda: 0, margemEbitda: 0, ebit: 0,
+      dividaLiquida: dividaLiquida, patrimonioAjustado: patrimonioAjustado, multiploSetor: 0, multiploAjustado: 0,
+      wacc: 0, gPerpetuidade: 0, evMultiplo: 0, evDcf: 0, equityBase: 0, equityMin: 0, equityMax: 0,
+      fatores: [], pilares: [], scoreProntidao: 0, alertas: []
+    };
+  }
+
+  function calcularValuation(i) {
+    var m = i.periodo === "mensal" ? 12 : 1;
+    var receitaAnual = i.receita * m;
+    var cmv = i.cmv * m;
+    var despesas = i.despesas * m;
+    var depreciacao = i.depreciacao * m;
+
+    var ebitda = receitaAnual - cmv - despesas;
+    var ebit = ebitda - depreciacao;
+    var margemEbitda = receitaAnual > 0 ? ebitda / receitaAnual : 0;
+
+    var setor = null;
+    for (var s = 0; s < SETORES.length; s++) { if (SETORES[s].value === i.setor) { setor = SETORES[s]; break; } }
+    if (!setor) setor = SETORES[SETORES.length - 1];
+
+    var cresc = null;
+    for (var c = 0; c < CRESCIMENTO.length; c++) { if (CRESCIMENTO[c].value === i.crescimento) { cresc = CRESCIMENTO[c]; break; } }
+    if (!cresc) cresc = CRESCIMENTO[2];
+
+    var dividaTotal = i.dividasBancarias + i.contasPagar + i.passivosFiscais;
+    var dividaLiquida = dividaTotal - i.caixa;
+    var patrimonioAjustado = i.imobilizado + i.estoque + i.contasReceber + i.caixa - dividaTotal;
+
+    var alertas = [];
+
+    if (receitaAnual <= 0) {
+      var r = vazio(receitaAnual, patrimonioAjustado, dividaLiquida);
+      r.mensagem = "Informe a receita para que a avaliação possa ser processada.";
+      return r;
+    }
+
+    var porte =
+      receitaAnual < 1000000 ? 0.72 :
+      receitaAnual < 5000000 ? 0.85 :
+      receitaAnual < 20000000 ? 1.00 :
+      receitaAnual < 50000000 ? 1.12 : 1.25;
+
+    var margemRel = clamp(margemEbitda / setor.margemRef, 0.4, 2);
+    var fatorMargem = clamp(0.8 + 0.2 * margemRel, 0.8, 1.22);
+
+    var itens = [
+      { label: "Porte e escala de receita", fator: porte, risco: receitaAnual < 5000000 ? 0.02 : 0 },
+      { label: "Trajetória de crescimento", fator: cresc.fator, risco: cresc.value === "queda" ? 0.02 : 0 },
+      { label: "Margem EBITDA vs. setor", fator: fatorMargem, risco: margemEbitda < setor.margemRef * 0.6 ? 0.012 : 0 },
+      Object.assign({ label: "Dependência do sócio" }, q("dependenciaSocio", i.dependenciaSocio)),
+      Object.assign({ label: "Concentração de clientes" }, q("concentracaoClientes", i.concentracaoClientes)),
+      Object.assign({ label: "Qualidade da informação contábil" }, q("qualidadeContabil", i.qualidadeContabil)),
+      Object.assign({ label: "Recorrência de receita" }, q("recorrencia", i.recorrencia)),
+      Object.assign({ label: "Planejamento e orçamento" }, q("planejamento", i.planejamento)),
+      Object.assign({ label: "Projeções financeiras" }, q("projecoes", i.projecoes)),
+      Object.assign({ label: "Governança e decisão" }, q("governanca", i.governanca)),
+      Object.assign({ label: "Maturidade de mercado" }, q("tempoMercado", i.tempoMercado))
+    ];
+
+    var fatorTotal = 1;
+    for (var fi = 0; fi < itens.length; fi++) fatorTotal *= itens[fi].fator;
+    fatorTotal = clamp(fatorTotal, 0.45, 1.75);
+
+    var multiploAjustado = clamp(setor.multiplo * fatorTotal, 1.5, 14);
+    var evMultiplo = Math.max(0, ebitda * multiploAjustado);
+
+    var riscoExtra = 0;
+    for (var ri = 0; ri < itens.length; ri++) riscoExtra += (itens[ri].risco || 0);
+    var wacc = clamp(0.135 + riscoExtra, 0.115, 0.24);
+    var gPerpetuidade = clamp(Math.min(cresc.g, 0.045), 0.0, 0.045);
+
+    var aliquota = 0.34;
+    var reinvestimento = 0.18;
+    var fcf = Math.max(0, ebit) * (1 - aliquota) + depreciacao - ebitda * reinvestimento;
+    var evDcf = 0;
+    var g = cresc.g;
+    for (var ano = 1; ano <= 5; ano++) {
+      g = g * 0.72 + gPerpetuidade * 0.28;
+      fcf = fcf * (1 + g);
+      evDcf += fcf / Math.pow(1 + wacc, ano);
+    }
+    var terminal = (fcf * (1 + gPerpetuidade)) / (wacc - gPerpetuidade);
+    evDcf += terminal / Math.pow(1 + wacc, 5);
+    evDcf = Math.max(0, evDcf);
+
+    var pesoMultiplo = 0.6;
+    var evBase = evMultiplo * pesoMultiplo + evDcf * (1 - pesoMultiplo);
+    var equityBase = evBase - dividaLiquida;
+
+    if (ebitda <= 0) {
+      alertas.push("O EBITDA informado é negativo ou nulo. Nesse cenário a avaliação passa a ser conduzida por valor patrimonial, e não por capacidade de geração de caixa.");
+      equityBase = Math.max(patrimonioAjustado, 0);
+    }
+
+    equityBase = Math.max(equityBase, Math.max(patrimonioAjustado * 0.8, 0));
+
+    var amplitude = i.qualidadeContabil === "informal" ? 0.24 : i.qualidadeContabil === "parcial" ? 0.17 : 0.12;
+    var equityMin = Math.max(0, equityBase * (1 - amplitude));
+    var equityMax = equityBase * (1 + amplitude * 1.15);
+
+    if (dividaLiquida > ebitda * 3 && ebitda > 0) {
+      alertas.push("A dívida líquida supera 3x o EBITDA. O nível de endividamento tende a reduzir de forma relevante o valor disponível ao sócio em uma negociação.");
+    }
+    if (i.dependenciaSocio === "alta") {
+      alertas.push("A dependência da figura do sócio é o fator que mais penaliza o valor nesta avaliação. É também o de correção mais rápida.");
+    }
+    if (i.qualidadeContabil === "informal") {
+      alertas.push("Sem demonstrações gerenciais consistentes, o comprador aplica desconto de risco informacional. Estruturar a informação costuma capturar valor antes de qualquer negociação.");
+    }
+
+    function pilar(label, keys) {
+      var total = 0;
+      for (var k = 0; k < keys.length; k++) total += q(keys[k][0], keys[k][1]).score;
+      var score = Math.round(total / keys.length);
+      return { label: label, score: score, nota: score >= 80 ? "Estruturado" : score >= 50 ? "Em evolução" : "Crítico" };
+    }
+
+    var pilares = [
+      pilar("Informação financeira", [["qualidadeContabil", i.qualidadeContabil], ["projecoes", i.projecoes]]),
+      pilar("Planejamento e governança", [["planejamento", i.planejamento], ["governanca", i.governanca]]),
+      pilar("Independência da operação", [["dependenciaSocio", i.dependenciaSocio], ["tempoMercado", i.tempoMercado]]),
+      pilar("Qualidade da receita", [["recorrencia", i.recorrencia], ["concentracaoClientes", i.concentracaoClientes]])
+    ];
+
+    var scoreProntidao = 0;
+    for (var pi = 0; pi < pilares.length; pi++) scoreProntidao += pilares[pi].score;
+    scoreProntidao = Math.round(scoreProntidao / pilares.length);
+
+    return {
+      valido: true, receitaAnual: receitaAnual, ebitda: ebitda, margemEbitda: margemEbitda, ebit: ebit,
+      dividaLiquida: dividaLiquida, patrimonioAjustado: patrimonioAjustado, multiploSetor: setor.multiplo,
+      multiploAjustado: multiploAjustado, wacc: wacc, gPerpetuidade: gPerpetuidade, evMultiplo: evMultiplo,
+      evDcf: evDcf, equityBase: equityBase, equityMin: equityMin, equityMax: equityMax,
+      fatores: itens.map(function (it) { return { label: it.label, fator: it.fator }; }),
+      pilares: pilares, scoreProntidao: scoreProntidao, alertas: alertas, setorLabel: setor.label,
+      motivoLabel: (function(){ for (var mi=0; mi<MOTIVOS.length; mi++){ if(MOTIVOS[mi].value===i.motivo) return MOTIVOS[mi].label; } return i.motivo; })()
+    };
+  }
+
+  function brl(v) {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(Math.round(v));
+  }
+  function pct(v) {
+    return new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 }).format(v);
+  }
+  function fmtNum(v) {
+    return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(v);
+  }
+
+  /* ---------- Estado do wizard ---------- */
+  var NOMES_ETAPAS = ["Antes de começar", "Motivo da avaliação", "Resultados", "Ativos", "Passivos", "Planejamento estratégico", "Sobre a empresa", "Sobre você"];
+  var BLOCOS = [
+    { titulo: "Início", etapas: [0] },
+    { titulo: "Financeiro", etapas: [1, 2, 3, 4] },
+    { titulo: "Perfil", etapas: [5, 6, 7] }
+  ];
+  var TOTAL = NOMES_ETAPAS.length;
+
+  var form = {
+    motivo: "", periodo: "",
+    receita: null, cmv: null, despesas: null, depreciacao: null, crescimento: "",
+    imobilizado: null, estoque: null, contasReceber: null, caixa: null,
+    dividasBancarias: null, contasPagar: null, passivosFiscais: null,
+    planejamento: "", projecoes: "", governanca: "",
+    setor: "", tempoMercado: "", funcionarios: "", dependenciaSocio: "", concentracaoClientes: "", qualidadeContabil: "", recorrencia: "",
+    nome: "", email: "", telefone: "", empresa: "", cargo: ""
+  };
+  var step = 0;
+  var maxStepReached = 0;
+
+  var emailValido = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
+
+  function isStepValid(s) {
+    switch (s) {
+      case 0: return true;
+      case 1: return !!form.motivo && !!form.periodo;
+      case 2: return (form.receita || 0) > 0 && form.cmv !== null && form.despesas !== null && !!form.crescimento;
+      case 3: return form.imobilizado !== null && form.estoque !== null && form.contasReceber !== null && form.caixa !== null;
+      case 4: return form.dividasBancarias !== null && form.contasPagar !== null && form.passivosFiscais !== null;
+      case 5: return !!form.planejamento && !!form.projecoes && !!form.governanca;
+      case 6: return !!form.setor && !!form.tempoMercado && !!form.funcionarios && !!form.dependenciaSocio && !!form.concentracaoClientes && !!form.qualidadeContabil && !!form.recorrencia;
+      case 7: return form.nome.trim().length > 2 && emailValido(form.email) && form.telefone.replace(/\D/g, "").length >= 10 && form.empresa.trim().length > 1;
+      default: return false;
+    }
+  }
+
+  /* ---------- Renderização das option-cards ---------- */
+  function buildOptionGroup(container, groupName, options) {
+    container.innerHTML = "";
+    options.forEach(function (o, idx) {
+      var id = "opt-" + groupName + "-" + idx;
+      var wrap = document.createElement("div");
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = groupName; input.id = id; input.value = o.value; input.className = "option-radio";
+      var label = document.createElement("label");
+      label.setAttribute("for", id); label.className = "option-card";
+      var dot = document.createElement("span"); dot.className = "option-dot";
+      var textWrap = document.createElement("span"); textWrap.className = "option-text";
+      var lbl = document.createElement("span"); lbl.className = "option-label"; lbl.textContent = o.label;
+      textWrap.appendChild(lbl);
+      if (o.hint) { var hint = document.createElement("span"); hint.className = "option-hint"; hint.textContent = o.hint; textWrap.appendChild(hint); }
+      label.appendChild(dot); label.appendChild(textWrap);
+      wrap.appendChild(input); wrap.appendChild(label);
+      container.appendChild(wrap);
+      input.addEventListener("change", function () {
+        form[groupName] = o.value;
+        onFieldChange();
+      });
+    });
+  }
+
+  document.querySelectorAll('[data-group="motivo"]').forEach(function (el) { buildOptionGroup(el, "motivo", MOTIVOS); });
+  document.querySelectorAll('[data-group="periodo"]').forEach(function (el) { buildOptionGroup(el, "periodo", OPCOES.periodo); });
+  document.querySelectorAll('[data-group="crescimento"]').forEach(function (el) { buildOptionGroup(el, "crescimento", CRESCIMENTO); });
+  document.querySelectorAll('[data-group="planejamento"]').forEach(function (el) { buildOptionGroup(el, "planejamento", OPCOES.planejamento); });
+  document.querySelectorAll('[data-group="projecoes"]').forEach(function (el) { buildOptionGroup(el, "projecoes", OPCOES.projecoes); });
+  document.querySelectorAll('[data-group="governanca"]').forEach(function (el) { buildOptionGroup(el, "governanca", OPCOES.governanca); });
+  document.querySelectorAll('[data-group="setor"]').forEach(function (el) { buildOptionGroup(el, "setor", SETORES); });
+  document.querySelectorAll('[data-group="tempoMercado"]').forEach(function (el) { buildOptionGroup(el, "tempoMercado", OPCOES.tempoMercado); });
+  document.querySelectorAll('[data-group="funcionarios"]').forEach(function (el) { buildOptionGroup(el, "funcionarios", OPCOES.funcionarios); });
+  document.querySelectorAll('[data-group="dependenciaSocio"]').forEach(function (el) { buildOptionGroup(el, "dependenciaSocio", OPCOES.dependenciaSocio); });
+  document.querySelectorAll('[data-group="concentracaoClientes"]').forEach(function (el) { buildOptionGroup(el, "concentracaoClientes", OPCOES.concentracaoClientes); });
+  document.querySelectorAll('[data-group="qualidadeContabil"]').forEach(function (el) { buildOptionGroup(el, "qualidadeContabil", OPCOES.qualidadeContabil); });
+  document.querySelectorAll('[data-group="recorrencia"]').forEach(function (el) { buildOptionGroup(el, "recorrencia", OPCOES.recorrencia); });
+
+  /* ---------- Money inputs ---------- */
+  function digitsOnly(s) { return s.replace(/\D/g, ""); }
+  document.querySelectorAll('[data-money]').forEach(function (input) {
+    input.addEventListener("input", function () {
+      var d = digitsOnly(input.value);
+      var val = d === "" ? null : Math.min(Number(d), 999999999999);
+      form[input.getAttribute("data-money")] = val;
+      input.value = val === null ? "" : fmtNum(val);
+      if (["receita", "cmv", "despesas"].indexOf(input.getAttribute("data-money")) !== -1) updateEbitdaPreview();
+      onFieldChange();
+    });
+  });
+
+  /* ---------- Text inputs ---------- */
+  document.querySelectorAll('[data-text]').forEach(function (input) {
+    input.addEventListener("input", function () {
+      form[input.getAttribute("data-text")] = input.value;
+      onFieldChange();
+    });
+  });
+
+  function updateEbitdaPreview() {
+    var box = document.getElementById("ebitda-preview");
+    var r = form.receita || 0;
+    if (!r) { box.style.display = "none"; return; }
+    var c = form.cmv || 0, d = form.despesas || 0;
+    var e = r - c - d;
+    document.getElementById("ebitda-preview-val").textContent = brl(e);
+    document.getElementById("ebitda-preview-margem").textContent = pct(r ? e / r : 0);
+    box.style.display = "flex";
+  }
+
+  /* ---------- Navegação ---------- */
+  var btnVoltar = document.getElementById("btn-voltar");
+  var btnAvancar = document.getElementById("btn-avancar");
+  var stepHint = document.getElementById("step-hint");
+
+  function onFieldChange() {
+    btnAvancar.disabled = !isStepValid(step);
+    stepHint.textContent = isStepValid(step) ? "" : "Preencha todos os campos para avançar";
+  }
+
+  function scrollTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function renderStepEntry() {
+    if (step === 2) {
+      var lbl = form.periodo === "mensal" ? "mensal" : "anual";
+      document.getElementById("step2-desc").textContent = "Informe os valores em base " + lbl + ", conforme selecionado na etapa anterior. O EBITDA é calculado automaticamente.";
+      document.getElementById("lbl-receita").textContent = "Receita bruta (" + lbl + ")";
+      document.getElementById("lbl-cmv").textContent = "Custos diretos / CMV (" + lbl + ")";
+      document.getElementById("lbl-despesas").textContent = "Despesas operacionais (" + lbl + ")";
+      document.getElementById("lbl-depreciacao").textContent = "Depreciação e amortização (" + lbl + ")";
+      updateEbitdaPreview();
+    }
+  }
+
+  function renderStep() {
+    document.querySelectorAll(".wizard-step").forEach(function (el) {
+      el.classList.toggle("active", Number(el.getAttribute("data-step")) === step);
+    });
+    document.getElementById("result-panel").classList.remove("active");
+    document.getElementById("wizard-steps").style.display = "";
+    document.getElementById("step-nav").style.display = "";
+
+    btnVoltar.style.display = step > 0 ? "" : "none";
+    btnAvancar.textContent = step === TOTAL - 1 ? "Ver avaliação" : "Avançar";
+    btnAvancar.disabled = !isStepValid(step);
+    stepHint.textContent = "";
+
+    var pct2 = Math.round((Math.min(step, TOTAL) / TOTAL) * 100);
+    document.getElementById("progress-pct").textContent = pct2 + "%";
+    document.getElementById("progress-fill").style.width = pct2 + "%";
+
+    renderTrilha();
+    renderStepEntry();
+  }
+
+  function renderTrilha() {
+    var ol = document.getElementById("trilha");
+    ol.innerHTML = "";
+    BLOCOS.forEach(function (bloco, bi) {
+      var li = document.createElement("li");
+      var p = document.createElement("p");
+      p.className = "trilha-bloco-label";
+      p.textContent = String(bi + 1).padStart(2, "0") + " — " + bloco.titulo;
+      li.appendChild(p);
+      var ul = document.createElement("ul");
+      ul.className = "trilha-steps";
+      bloco.etapas.forEach(function (e) {
+        var itemLi = document.createElement("li");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = NOMES_ETAPAS[e];
+        btn.disabled = e > maxStepReached;
+        if (e === step) btn.className = "current";
+        else if (e <= maxStepReached) btn.className = "done";
+        btn.addEventListener("click", function () {
+          if (e <= maxStepReached) { step = e; renderStep(); scrollTop(); }
+        });
+        itemLi.appendChild(btn);
+        ul.appendChild(itemLi);
+      });
+      li.appendChild(ul);
+      ol.appendChild(li);
+    });
+  }
+
+  btnAvancar.addEventListener("click", function () {
+    if (!isStepValid(step)) return;
+    if (step === TOTAL - 1) {
+      finalizar();
+      return;
+    }
+    step++;
+    if (step > maxStepReached) maxStepReached = step;
+    renderStep();
+    scrollTop();
+  });
+
+  btnVoltar.addEventListener("click", function () {
+    step = Math.max(0, step - 1);
+    renderStep();
+    scrollTop();
+  });
+
+  /* ---------- Resultado ---------- */
+  function finalizar() {
+    var input = {
+      motivo: form.motivo, periodo: form.periodo || "anual",
+      receita: form.receita || 0, cmv: form.cmv || 0, despesas: form.despesas || 0, depreciacao: form.depreciacao || 0,
+      crescimento: form.crescimento,
+      imobilizado: form.imobilizado || 0, estoque: form.estoque || 0, contasReceber: form.contasReceber || 0, caixa: form.caixa || 0,
+      dividasBancarias: form.dividasBancarias || 0, contasPagar: form.contasPagar || 0, passivosFiscais: form.passivosFiscais || 0,
+      planejamento: form.planejamento, projecoes: form.projecoes, governanca: form.governanca,
+      setor: form.setor, tempoMercado: form.tempoMercado, funcionarios: form.funcionarios,
+      dependenciaSocio: form.dependenciaSocio, concentracaoClientes: form.concentracaoClientes,
+      qualidadeContabil: form.qualidadeContabil, recorrencia: form.recorrencia
+    };
+    var result = calcularValuation(input);
+    renderResult(result);
+    enviarLead(result);
+  }
+
+  function metricEl(label, value, note) {
+    var div = document.createElement("div"); div.className = "metric";
+    div.innerHTML = '<p class="lbl"></p><p class="val"></p>' + (note ? '<p class="note"></p>' : '');
+    div.querySelector(".lbl").textContent = label;
+    div.querySelector(".val").textContent = value;
+    if (note) div.querySelector(".note").textContent = note;
+    return div;
+  }
+
+  function renderResult(result) {
+    document.getElementById("wizard-steps").style.display = "none";
+    document.getElementById("step-nav").style.display = "none";
+    var panel = document.getElementById("result-panel");
+    panel.classList.add("active");
+    panel.innerHTML = "";
+
+    if (!result.valido) {
+      var sec = document.createElement("div");
+      sec.className = "result-section";
+      sec.innerHTML =
+        '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Avaliação indisponível</span></div>' +
+        '<p>' + result.mensagem + '</p>';
+      var backBtn = document.createElement("button");
+      backBtn.type = "button"; backBtn.className = "action-btn ghost"; backBtn.textContent = "Revisar dados";
+      backBtn.style.alignSelf = "flex-start";
+      backBtn.addEventListener("click", reiniciar);
+      sec.appendChild(backBtn);
+      panel.appendChild(sec);
+      scrollTop();
+      return;
+    }
+
+    var primeiroNome = form.nome ? form.nome.trim().split(" ")[0] : "";
+
+    // Seção 1: título
+    var s1 = document.createElement("section"); s1.className = "result-section";
+    s1.innerHTML =
+      '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Resultado da avaliação</span></div>' +
+      '<h2>' + (primeiroNome ? primeiroNome + ", sua " : "Sua ") + 'empresa foi avaliada em uma faixa de <em>' + brl(result.equityBase) + '</em></h2>' +
+      '<p>O valor abaixo representa o <strong>equity value</strong> — o valor econômico atribuível aos sócios, já descontada a dívida líquida. Trata-se de uma estimativa preliminar construída sobre as informações declaradas.</p>';
+    panel.appendChild(s1);
+
+    // Seção 2: faixa
+    var min = result.equityMin, max = result.equityMax;
+    var basePos = max > min ? ((result.equityBase - min) / (max - min)) * 100 : 50;
+    basePos = Math.min(98, Math.max(0, basePos));
+    var s2 = document.createElement("section"); s2.className = "faixa-panel";
+    s2.innerHTML =
+      '<div class="faixa-row">' +
+        '<div class="faixa-item"><p class="lbl">Cenário conservador</p><p class="val">' + brl(min) + '</p></div>' +
+        '<div class="faixa-item center"><p class="eyebrow">Valor de referência</p><p class="val">' + brl(result.equityBase) + '</p></div>' +
+        '<div class="faixa-item right"><p class="lbl">Cenário otimista</p><p class="val">' + brl(max) + '</p></div>' +
+      '</div>' +
+      '<div class="faixa-ruler"><div class="rule-fill gold-rule"></div><div class="marker" style="left:' + basePos + '%"></div></div>' +
+      '<p class="faixa-note">A amplitude da faixa reflete o grau de confiabilidade das informações disponíveis. Quanto mais estruturada a base financeira, mais estreita a faixa — e maior o poder de negociação.</p>';
+    panel.appendChild(s2);
+
+    // Seção 3: fundamentos
+    var s3 = document.createElement("section"); s3.className = "result-section";
+    var s3head = document.createElement("div");
+    s3head.innerHTML = '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Fundamentos do cálculo</span></div>';
+    s3.appendChild(s3head);
+    var grid = document.createElement("div"); grid.className = "metric-grid";
+    grid.appendChild(metricEl("Receita anualizada", brl(result.receitaAnual)));
+    grid.appendChild(metricEl("EBITDA anualizado", brl(result.ebitda), "Margem de " + pct(result.margemEbitda)));
+    grid.appendChild(metricEl("Dívida líquida", brl(result.dividaLiquida)));
+    grid.appendChild(metricEl("Múltiplo EV/EBITDA aplicado", result.multiploAjustado.toFixed(1) + "x", "Referência do setor: " + result.multiploSetor.toFixed(1) + "x"));
+    grid.appendChild(metricEl("Enterprise value — múltiplos", brl(result.evMultiplo), "Peso de 60% no valor de referência"));
+    grid.appendChild(metricEl("Enterprise value — FCD", brl(result.evDcf), "WACC de " + pct(result.wacc) + " · perpetuidade de " + pct(result.gPerpetuidade)));
+    s3.appendChild(grid);
+    panel.appendChild(s3);
+
+    // Seção 4: prontidão
+    var s4 = document.createElement("section"); s4.className = "result-section";
+    var s4head = document.createElement("div");
+    s4head.innerHTML =
+      '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Prontidão para uma transação</span></div>' +
+      '<div class="score-row"><span class="num">' + result.scoreProntidao + '</span><span class="of">de 100 pontos</span></div>';
+    s4.appendChild(s4head);
+    var pilaresList = document.createElement("div"); pilaresList.className = "pilares-list";
+    result.pilares.forEach(function (p) {
+      var row = document.createElement("div"); row.className = "pilar-row";
+      row.innerHTML = '<span class="p-label"></span><span class="p-track"><span class="p-fill" style="width:' + p.score + '%"></span></span><span class="p-nota"></span>';
+      row.querySelector(".p-label").textContent = p.label;
+      row.querySelector(".p-nota").textContent = p.nota;
+      pilaresList.appendChild(row);
+    });
+    s4.appendChild(pilaresList);
+    panel.appendChild(s4);
+
+    // Seção 5: fatores
+    var s5 = document.createElement("section"); s5.className = "result-section";
+    var s5head = document.createElement("div");
+    s5head.innerHTML = '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Fatores que ajustaram o múltiplo</span></div>';
+    s5.appendChild(s5head);
+    var fgrid = document.createElement("div"); fgrid.className = "fatores-grid";
+    result.fatores.forEach(function (f) {
+      var delta = (f.fator - 1) * 100;
+      var pos = delta >= 0;
+      var row = document.createElement("div"); row.className = "fator-row";
+      row.innerHTML = '<span class="f-label"></span><span class="f-delta ' + (pos ? "pos" : "neg") + '"></span>';
+      row.querySelector(".f-label").textContent = f.label;
+      row.querySelector(".f-delta").textContent = (pos ? "+" : "") + delta.toFixed(1) + "%";
+      fgrid.appendChild(row);
+    });
+    s5.appendChild(fgrid);
+    panel.appendChild(s5);
+
+    // Seção 6: alertas
+    if (result.alertas.length > 0) {
+      var s6 = document.createElement("section"); s6.className = "result-section";
+      var s6head = document.createElement("div");
+      s6head.innerHTML = '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Leitura técnica</span></div>';
+      s6.appendChild(s6head);
+      var ul = document.createElement("ul"); ul.className = "alertas-list";
+      result.alertas.forEach(function (a) {
+        var li = document.createElement("li");
+        var p = document.createElement("p"); p.textContent = a;
+        li.appendChild(p); ul.appendChild(li);
+      });
+      s6.appendChild(ul);
+      panel.appendChild(s6);
+    }
+
+    // Seção 7: CTA
+    var s7 = document.createElement("section"); s7.className = "cta-panel";
+    s7.innerHTML =
+      '<div style="display:flex;align-items:center;gap:1rem;"><span class="gold-rule" style="display:block;width:32px;height:1px;"></span><span class="eyebrow">Próximo passo</span></div>' +
+      '<h3>Uma estimativa orienta. Uma <em>avaliação estruturada</em> sustenta a negociação.</h3>' +
+      '<p>Esta calculadora trabalha com premissas padronizadas. Em um laudo de valuation conduzido pela D&amp;M, o resultado é normalizado, as premissas são construídas caso a caso e o valor passa a ser defensável diante de compradores, investidores e sócios.</p>' +
+      '<div class="btn-row">' +
+        '<a href="https://www.demconsultoriafinanceira.com/#contact-form" target="_blank" rel="noopener noreferrer" class="action-btn" data-event="cta_especialista" data-location="valuation_resultado">Conversar com um especialista</a>' +
+        '<button type="button" class="action-btn ghost" id="btn-refazer">Refazer simulação</button>' +
+      '</div>' +
+      '<div class="form-status-note" id="lead-status-note"></div>';
+    panel.appendChild(s7);
+    s7.querySelector("#btn-refazer").addEventListener("click", reiniciar);
+
+    var disclaimer = document.createElement("p"); disclaimer.className = "disclaimer";
+    disclaimer.textContent = "Aviso metodológico: o resultado apresentado é uma estimativa preliminar, gerada a partir de informações declaradas pelo usuário e de múltiplos setoriais de referência. Não constitui laudo de avaliação, parecer de valor justo, recomendação de investimento ou preço de transação. D&M Consultoria Financeira.";
+    panel.appendChild(disclaimer);
+
+    document.getElementById("progress-pct").textContent = "100%";
+    document.getElementById("progress-fill").style.width = "100%";
+    scrollTop();
+  }
+
+  function reiniciar() {
+    form = {
+      motivo: "", periodo: "", receita: null, cmv: null, despesas: null, depreciacao: null, crescimento: "",
+      imobilizado: null, estoque: null, contasReceber: null, caixa: null,
+      dividasBancarias: null, contasPagar: null, passivosFiscais: null,
+      planejamento: "", projecoes: "", governanca: "",
+      setor: "", tempoMercado: "", funcionarios: "", dependenciaSocio: "", concentracaoClientes: "", qualidadeContabil: "", recorrencia: "",
+      nome: "", email: "", telefone: "", empresa: "", cargo: ""
+    };
+    document.querySelectorAll('.option-radio').forEach(function (r) { r.checked = false; });
+    document.querySelectorAll('[data-money]').forEach(function (i) { i.value = ""; });
+    document.querySelectorAll('[data-text]').forEach(function (i) { i.value = ""; });
+    step = 0; maxStepReached = 0;
+    renderStep();
+    scrollTop();
+  }
+
+  /* ---------- Envio do lead (mesmo webhook do site institucional) ---------- */
+  function enviarLead(result) {
+    var noteEl = document.getElementById("lead-status-note");
+    if (!LEAD_ENDPOINT) {
+      if (noteEl) { noteEl.textContent = "Formulário ainda não conectado a um endpoint de envio."; noteEl.classList.add("show"); }
+      return;
+    }
+    var payload = {
+      nome: form.nome,
+      empresa: form.empresa,
+      cargo: form.cargo,
+      email: form.email,
+      whatsapp: form.telefone,
+      segmento: result.setorLabel || form.setor,
+      faturamento: brl(result.receitaAnual),
+      desafio: result.motivoLabel || form.motivo,
+      mensagem: "Calculadora de Valuation — Valor de referência: " + brl(result.equityBase) + " | Faixa: " + brl(result.equityMin) + " a " + brl(result.equityMax) + " | Prontidão: " + result.scoreProntidao + "/100"
+    };
+    try {
+      if (window.dataLayer && typeof window.dataLayer.push === "function") {
+        window.dataLayer.push({ event: "valuation_lead_submit", location: "valuation" });
+      }
+    } catch (e) {}
+    fetch(LEAD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function () { /* silencioso — não interrompe a exibição do resultado */ });
+  }
+
+  /* ---------- Rodapé ---------- */
+  var footYear = document.getElementById("foot-year");
+  if (footYear) footYear.textContent = new Date().getFullYear();
+
+  /* ---------- Init ---------- */
+  renderStep();
+})();
+</script>
+</body>
+</html>
