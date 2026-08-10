@@ -1001,7 +1001,15 @@
     stepHint.textContent = isStepValid(step) ? "" : "Preencha todos os campos para avançar";
   }
 
-  function scrollTop() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function scrollTop() {
+    // Rola só até o topo da área do formulário (não até o hero lá em cima) — assim quem
+    // está preenchendo a calculadora não precisa descer de novo a cada "Avançar".
+    var alvo = document.querySelector(".wizard-content");
+    if (!alvo) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    var folgaTopo = 96; // espaço para o cabeçalho fixo do site
+    var y = alvo.getBoundingClientRect().top + window.pageYOffset - folgaTopo;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  }
 
   function renderStepEntry() {
     if (step === 2) {
