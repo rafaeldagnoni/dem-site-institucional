@@ -1238,9 +1238,15 @@
         var payload = {};
         data.forEach(function (value, key) { payload[key] = value; });
 
+        // SEM header "Content-Type: application/json" de propósito: esse header força um
+        // preflight CORS (OPTIONS) que a configuração deste catch hook do Zapier rejeita
+        // (não inclui "content-type" em Access-Control-Allow-Headers) — o POST real nunca
+        // chega a sair, e o erro fica só no console, invisível pra quem preenche o formulário.
+        // Sem o header, o navegador manda como "text/plain" (sem preflight) e o Zapier
+        // recebe e faz o parse do corpo como JSON do mesmo jeito. Confirmado testando
+        // direto contra o webhook em produção.
         fetch(CONTACT_FORM_ENDPOINT, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).then(function () {
           revealStatus('Recebemos suas informações. Nossa equipe entrará em contato em breve. Se preferir adiantar a conversa, use um dos canais abaixo.');
