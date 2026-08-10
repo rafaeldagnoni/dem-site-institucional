@@ -1196,6 +1196,20 @@
         root.classList.remove("pdf-export-mode");
         restaurarDetalhes();
 
+        // O PDF em si tem fundo BRANCO por padrão — só as imagens dos blocos são escuras.
+        // Sem pintar a página inteira, a margem ao redor do conteúdo e as folgas entre um
+        // bloco e outro aparecem brancas, quebrando a identidade visual. Pintamos o fundo
+        // de cada página inteira (margem incluída) com a mesma cor de fundo do site ANTES
+        // de colocar as imagens em cima.
+        var COR_FUNDO = [10, 14, 11]; // mesmo valor de --background: #0a0e0b
+        function pintarFundoPagina() {
+          pdf.setFillColor(COR_FUNDO[0], COR_FUNDO[1], COR_FUNDO[2]);
+          pdf.rect(0, 0, pageWidth, pageHeight, "F");
+        }
+        var _addPageOriginal = pdf.addPage.bind(pdf);
+        pdf.addPage = function () { _addPageOriginal(); pintarFundoPagina(); return pdf; };
+        pintarFundoPagina(); // primeira página
+
         var gapPt = 22;
         var currentY = margin;
 
