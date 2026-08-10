@@ -430,6 +430,17 @@
     display: flex !important; width: 1040px; max-width: none; padding: 40px;
     background: var(--background); box-sizing: border-box;
   }
+  /* Cada filho direto de #result-panel é fotografado INDIVIDUALMENTE (ver gerarPdf()),
+     não mais o painel inteiro de uma vez — então o padding do painel acima não chega
+     mais visualmente ao conteúdo de cada bloco (cada captura começa na própria borda
+     do elemento). Replicamos aqui um respiro equivalente diretamente nos blocos "soltos"
+     (sem caixa/borda própria); blocos que já têm padding próprio (faixa-panel, cta-panel,
+     details.premissas) não precisam e por isso não são afetados por esta regra. */
+  .pdf-export-mode #result-panel > .result-section,
+  .pdf-export-mode #result-panel > .disclaimer,
+  .pdf-export-mode #result-panel > .print-header {
+    padding-left: 6px; padding-right: 6px; box-sizing: border-box;
+  }
   .pdf-export-mode .print-header { display: block; margin-bottom: 1rem; }
   .pdf-export-mode .print-header img { height: 34px; width: auto; filter: brightness(0) invert(1); }
   .pdf-export-mode .print-header .print-meta { margin-top: .6rem; font-size: .8rem; color: var(--muted-light); }
@@ -1135,9 +1146,6 @@
       detalhesEls.forEach(function (d, i) { d.open = estadoOriginalDetalhes[i]; });
     }
 
-    // Página de destino (dimensões fixas, não dependem da captura) — calculadas já aqui
-    // porque precisamos saber "quantos px CSS cabem numa página" ANTES de decidir quais
-    // elementos tratar como bloco atômico.
     var pdf = new window.jspdf.jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
     var margin = 32;
     var pageWidth = pdf.internal.pageSize.getWidth();
@@ -1145,93 +1153,91 @@
     var usableWidthPt = pageWidth - margin * 2;
     var usableHeightPt = pageHeight - margin * 2;
 
-    // Espera as fontes (Playfair Display / Inter) terminarem de carregar de verdade antes de
-    // medir ou capturar. Um setTimeout fixo não é confiável: se a fonte customizada aplicar
-    // DEPOIS da medição, o texto ocupa mais altura na captura do que o medido, e um bloco que
-    // "cabia" na página acaba cortado no meio. document.fonts.ready garante a ordem certa.
+    // IMPORTANTE: medir a altura de um bloco no DOM real e depois recortar essa mesma
+    // altura de UMA ÚNICA captura gigante do html2canvas é frágil — o html2canvas tem seu
+    // próprio motor de quebra de linha de texto, que não bate 100% com o do navegador.
+    // A diferença é pequena por bloco, mas some cortando texto no bloco errado.
+    // Solução: fotografar CADA bloco individualmente. Assim a altura usada para decidir a
+    // quebra de página vem sempre da própria captura daquele bloco — nunca de uma medição
+    // feita em outro lugar (native DOM) aplicada sobre uma imagem renderizada em outro lugar
+    // (html2canvas).
     var fontsProntas = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     return fontsProntas
       .catch(function () { /* nunca deixa a ausência de suporte à Font Loading API travar a geração */ })
-      .then(function () { return new Promise(function (resolve) { setTimeout(resolve, 120); }); }) // respiro extra para o reflow do layout largo aplicar
+      .then(function () { return new Promise(function (resolve) { setTimeout(resolve, 120); }); }) // respiro para o reflow do layout largo aplicar
       .then(function () {
-        // mede a posição de cada bloco e a largura do próprio elemento ENQUANTO o modo de
-        // exportação ainda está ativo — se medir depois de remover a classe, a largura volta
-        // a ser a do layout normal (mais estreita) e toda a escala de recorte fica errada.
-        var targetRect = target.getBoundingClientRect();
-        var targetWidthPx = target.offsetWidth;
-        var ptPerCssPx = usableWidthPt / targetWidthPx;
-        var maxBlockHeightPx = usableHeightPt / ptPerCssPx; // acima disso, um bloco não cabe inteiro numa página
+        var topElements = Array.prototype.slice.call(target.children).filter(function (el) { return el.offsetHeight > 0; });
 
-        // Normalmente cada filho direto de #result-panel (cada seção) vira um bloco.
-        // Se algum for maior que uma página inteira (ex.: "Entenda as premissas" com
-        // muito texto), descemos um nível e usamos os filhos DELE como blocos — assim
-        // nunca precisamos fatiar um bloco no meio de uma frase.
-        function coletarBlocos(el) {
-          var out = [];
-          Array.prototype.slice.call(el.children).forEach(function (child) {
-            var r = child.getBoundingClientRect();
-            var h = r.height;
-            if (h <= 0) return; // elemento oculto (ex.: nota de status vazia)
-            if (h > maxBlockHeightPx && child.children.length > 0) {
-              out = out.concat(coletarBlocos(child));
-            } else {
-              out.push({ topPx: r.top - targetRect.top, heightPx: h });
+        function capturarElemento(el) {
+          return window.html2canvas(el, { scale: 1.4, backgroundColor: "#0a0e0b", useCORS: true }).then(function (canvas) {
+            var alturaPt = canvas.height * (usableWidthPt / canvas.width);
+            if (alturaPt > usableHeightPt && el.children.length > 0) {
+              // este bloco sozinho não cabe numa página: descarta a captura e desce um
+              // nível, capturando os filhos dele individualmente (nunca fatiamos o meio
+              // de uma captura só por coordenada calculada)
+              var filhos = Array.prototype.slice.call(el.children).filter(function (c) { return c.offsetHeight > 0; });
+              return capturarSequencial(filhos);
             }
+            return [canvas];
           });
-          return out;
         }
 
-        var blocks = coletarBlocos(target);
-        return { blocks: blocks, targetWidthPx: targetWidthPx, ptPerCssPx: ptPerCssPx };
+        function capturarSequencial(elementos, idx, acumulado) {
+          idx = idx || 0; acumulado = acumulado || [];
+          if (idx >= elementos.length) return Promise.resolve(acumulado);
+          return capturarElemento(elementos[idx]).then(function (canvases) {
+            return capturarSequencial(elementos, idx + 1, acumulado.concat(canvases));
+          });
+        }
+
+        return capturarSequencial(topElements);
       })
-      .then(function (medidas) {
-        return window.html2canvas(target, { scale: 1.4, backgroundColor: "#0a0e0b", useCORS: true }).then(function (canvas) {
-          return { canvas: canvas, medidas: medidas };
-        });
-      })
-      .then(function (resultado) {
+      .then(function (canvasList) {
         root.classList.remove("pdf-export-mode");
         restaurarDetalhes();
 
-        var canvas = resultado.canvas;
-        var blocks = resultado.medidas.blocks;
-        var ptPerCssPx = resultado.medidas.ptPerCssPx;
-        var canvasPxPerCssPx = canvas.width / resultado.medidas.targetWidthPx; // resolução da captura (scale do html2canvas)
-        var gapPt = 22 * ptPerCssPx;
-
-        var cropCanvas = document.createElement("canvas");
-        var cropCtx = cropCanvas.getContext("2d");
+        var gapPt = 22;
         var currentY = margin;
 
-        function desenhaFatia(sy, sh, destY, destHeightPt) {
-          cropCanvas.width = canvas.width;
-          cropCanvas.height = sh;
-          cropCtx.clearRect(0, 0, canvas.width, sh);
-          cropCtx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
-          pdf.addImage(cropCanvas.toDataURL("image/jpeg", 0.78), "JPEG", margin, destY, usableWidthPt, destHeightPt);
-        }
+        canvasList.forEach(function (canvas) {
+          var imgHeightPt = canvas.height * (usableWidthPt / canvas.width);
 
-        blocks.forEach(function (block, idx) {
-          var blockHeightPt = block.heightPx * ptPerCssPx;
-
-          // salvaguarda final: mesmo depois de descer níveis, um único elemento (ex.: um
-          // parágrafo enorme) ainda maior que uma página — melhor página quase vazia do
-          // que texto sobreposto.
-          if (blockHeightPt > usableHeightPt) {
-            if (currentY !== margin) { pdf.addPage(); currentY = margin; }
-            desenhaFatia(block.topPx * canvasPxPerCssPx, block.heightPx * canvasPxPerCssPx, currentY, blockHeightPt);
-            pdf.addPage();
-            currentY = margin;
+          // salvaguarda final e rara: um único elemento-folha (ex.: um parágrafo enorme)
+          // ainda maior que uma página inteira mesmo depois de descer níveis — aqui sim
+          // fatiamos, mas usando a MESMA captura que será desenhada (sem cruzar com uma
+          // medição feita à parte), então o pior caso é uma quebra "burra", nunca texto
+          // cortado com conteúdo errado.
+          if (imgHeightPt > usableHeightPt) {
+            var pxPerPt = canvas.width / usableWidthPt;
+            var maxSlicePx = usableHeightPt * pxPerPt;
+            var offsetPx = 0;
+            var sliceCanvas = document.createElement("canvas");
+            var sliceCtx = sliceCanvas.getContext("2d");
+            while (offsetPx < canvas.height) {
+              if (currentY !== margin) { pdf.addPage(); currentY = margin; }
+              var slicePx = Math.min(maxSlicePx, canvas.height - offsetPx);
+              sliceCanvas.width = canvas.width;
+              sliceCanvas.height = slicePx;
+              sliceCtx.clearRect(0, 0, canvas.width, slicePx);
+              sliceCtx.drawImage(canvas, 0, offsetPx, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+              var slicePt = slicePx / pxPerPt;
+              pdf.addImage(sliceCanvas.toDataURL("image/jpeg", 0.78), "JPEG", margin, currentY, usableWidthPt, slicePt);
+              currentY += slicePt;
+              offsetPx += slicePx;
+              if (offsetPx < canvas.height) { pdf.addPage(); currentY = margin; }
+            }
+            currentY += gapPt;
             return;
           }
 
-          // bloco inteiro: só quebra página se não couber no espaço restante da página atual
-          if (currentY !== margin && currentY + blockHeightPt > pageHeight - margin) {
+          // caso normal: bloco inteiro cabe numa página — só quebra se não couber no
+          // espaço restante da página atual
+          if (currentY !== margin && currentY + imgHeightPt > pageHeight - margin) {
             pdf.addPage();
             currentY = margin;
           }
-          desenhaFatia(block.topPx * canvasPxPerCssPx, block.heightPx * canvasPxPerCssPx, currentY, blockHeightPt);
-          currentY += blockHeightPt + gapPt;
+          pdf.addImage(canvas.toDataURL("image/jpeg", 0.78), "JPEG", margin, currentY, usableWidthPt, imgHeightPt);
+          currentY += imgHeightPt + gapPt;
         });
 
         return pdf;
@@ -1639,10 +1645,19 @@
     // O PDF NÃO é enviado ao webhook/Monday — só os dados do lead abaixo. O botão
     // "Baixar PDF" continua disponível na página para quem quiser salvar o próprio
     // arquivo, mas isso é local, no navegador da pessoa, sem relação com este envio.
+    //
+    // IMPORTANTE: propositalmente SEM header "Content-Type: application/json" aqui.
+    // Declarar esse header faz o navegador disparar um preflight CORS (OPTIONS) antes
+    // do POST — e a configuração de CORS deste catch hook do Zapier não inclui
+    // "content-type" em Access-Control-Allow-Headers, então o preflight falha e o POST
+    // real NUNCA chega a ser enviado (erro silencioso: a página só vê uma rejeição
+    // genérica de rede). Sem o header, o navegador manda como "text/plain", que não
+    // exige preflight — e o Zapier reconhece e faz o parse do corpo como JSON do mesmo
+    // jeito. Confirmado testando direto contra o webhook em produção. NÃO reintroduzir
+    // esse header sem testar de novo contra o endpoint real.
     trackEvent("valuation_lead_submit", { location: "valuation" });
     fetch(LEAD_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     }).then(function (res) {
       leadEnviando = false;
