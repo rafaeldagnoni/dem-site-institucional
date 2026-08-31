@@ -107,9 +107,9 @@
 
     // Perfis de negócio fora do escopo do modelo, além dos setores incompatíveis acima
     perfisIncompativeis: {
-      pre_operacional: "Empresa pré-operacional ou sem receita",
+      pre_operacional: "Empresa que ainda não começou a operar ou a faturar",
       recuperacao_judicial: "Empresa em recuperação judicial",
-      continuidade_comprometida: "Continuidade operacional materialmente comprometida"
+      continuidade_comprometida: "Empresa com dificuldades graves e risco de encerrar as atividades"
     },
 
     crescimentoHistorico: [
@@ -267,10 +267,10 @@
         { value: "mais200", label: "Mais de 200" }
       ],
       perfilNegocio: [
-        { value: "operacional_estabelecida", label: "Empresa operacional estabelecida, em continuidade normal" },
-        { value: "pre_operacional", label: "Empresa pré-operacional ou sem receita" },
+        { value: "operacional_estabelecida", label: "Empresa em pleno funcionamento" },
+        { value: "pre_operacional", label: "Empresa que ainda não começou a operar ou a faturar" },
         { value: "recuperacao_judicial", label: "Empresa em recuperação judicial" },
-        { value: "continuidade_comprometida", label: "Continuidade operacional materialmente comprometida" }
+        { value: "continuidade_comprometida", label: "Empresa com dificuldades graves e risco de encerrar as atividades" }
       ]
     },
 
