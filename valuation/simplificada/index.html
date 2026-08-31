@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+  <title>Calculadora de Valuation Simplificada | D&amp;M Consultoria Financeira</title>
+  <meta name="description" content="Descubra em 6 perguntas uma estimativa do valor da sua empresa, por múltiplos setoriais de EV/EBITDA. Sem balanço, sem planilha, gratuito.">
+  <link rel="canonical" href="https://www.demconsultoriafinanceira.com/valuation/simplificada/">
+  <link rel="icon" type="image/png" href="/icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="D&amp;M Consultoria Financeira">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Calculadora de Valuation Simplificada | D&amp;M Consultoria Financeira">
+  <meta property="og:description" content="Descubra em 6 perguntas uma estimativa do valor da sua empresa, por múltiplos setoriais de EV/EBITDA. Sem balanço, sem planilha, gratuito.">
+  <meta property="og:url" content="https://www.demconsultoriafinanceira.com/valuation/simplificada/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Calculadora de Valuation D&M — Versão Simplificada",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Estimativa preliminar do valor econômico de uma empresa em 6 perguntas, por múltiplo setorial de EV/EBITDA. Não substitui um valuation profissional.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+    "provider": { "@type": "Organization", "name": "D&M Consultoria Financeira", "url": "https://www.demconsultoriafinanceira.com/" }
+  }
+  </script>
+
+  <!--
+    ATENÇÃO — LEIA ANTES DE PUBLICAR
+    Esta é a versão RÁPIDA da calculadora (6 perguntas, sem balanço/DRE). Usa
+    apenas múltiplo setorial de EV/EBITDA com margem percebida — não é a mesma
+    profundidade metodológica da versão completa (ver /valuation/completa/).
+    Os múltiplos setoriais (ver engine.js, SETORES) são PREMISSAS INTERNAS DA
+    FERRAMENTA, ainda pendentes de validação por fonte externa — mesmo status
+    já sinalizado na versão completa. Não remover os avisos de "estimativa
+    preliminar" sem que a D&M valide e documente as fontes reais.
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0; }
+
+  @view-transition { navigation: auto; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  :root {
+    --background: #0a0e0b;
+    --foreground: #f5f3ee;
+    --surface: #0f1a12;
+    --surface-raised: #123324;
+    --gold: #b8945a;
+    --gold-deep: #cfa96e;
+    --emerald-deep: #082c20;
+    --muted: #8a8880;
+    --muted-light: #a3a19a;
+    --field-bg: #13221a;
+    --field-bg-hover: #182a1c;
+    --border: rgba(255,255,255,.16);
+    --border-strong: rgba(255,255,255,.28);
+    --destructive: #c1795a;
+    --positive: #8fbf8a;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    background: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .skip-link {
+    position: absolute; top: -80px; left: 12px; z-index: 1000;
+    background: var(--gold); color: var(--background); text-decoration: none;
+    padding: 12px 22px; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    transition: top .2s ease;
+  }
+  .skip-link:focus { top: 12px; }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--gold); outline-offset: 3px;
+  }
+
+  h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; font-weight: 400; }
+
+  .eyebrow-row { display: flex; align-items: center; gap: 1rem; }
+  .eyebrow { font-size: .75rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+  .gold-rule { display: block; width: 32px; height: 1px; background: linear-gradient(to right, var(--gold) 0%, rgba(184,148,90,.3) 60%, transparent 100%); }
+  .grid-backdrop {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 96px 96px;
+  }
+
+  /* ---------- Header ---------- */
+  header.site-header {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(10,14,11,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1240px; margin: 0 auto; padding: 20px 6%;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  }
+  .header-logo { display: flex; align-items: center; text-decoration: none; }
+  .header-logo img { height: 34px; width: auto; filter: brightness(0) invert(1); }
+  .header-nav { display: flex; align-items: center; gap: 2rem; }
+  .header-nav .tool-label { font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-light); }
+  .header-nav .tool-nav-link {
+    font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-light);
+    text-decoration: none; transition: color .2s;
+  }
+  .header-nav .tool-nav-link:hover { color: var(--gold); }
+  .header-nav .contato-link {
+    border-bottom: 1px solid var(--gold); padding-bottom: 2px;
+    font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+    text-decoration: none; transition: opacity .2s;
+  }
+  .header-nav .contato-link:hover { opacity: .7; }
+  @media (max-width: 640px) { .header-logo img { height: 28px; } .header-nav .tool-label, .header-nav .tool-nav-link { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero-band { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .hero-bg-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 90% at 12% 0%, var(--emerald-deep) 0%, transparent 62%);
+    opacity: .55;
+  }
+  .hero-inner { position: relative; max-width: 1240px; margin: 0 auto; padding: 80px 6% 64px; }
+  .hero-inner h1 {
+    margin-top: 2rem; max-width: 900px;
+    font-size: clamp(2.3rem, 5.4vw, 3.9rem); line-height: 1.12; letter-spacing: -.02em; color: var(--foreground);
+  }
+  .hero-inner h1 em { font-style: italic; color: var(--gold); }
+  .hero-inner p.lead { margin-top: 2rem; max-width: 620px; font-size: .92rem; line-height: 1.8; color: var(--muted); }
+
+  /* ---------- Layout (página única, sem trilha lateral) ---------- */
+  main { max-width: 1240px; margin: 0 auto; padding: 80px 6% 96px; }
+  .simples-wrap { max-width: 760px; }
+
+  .step-heading { margin-bottom: 3rem; }
+  .step-heading h2 {
+    margin-top: 1.25rem; max-width: 640px;
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem); line-height: 1.18; letter-spacing: -.01em; color: var(--foreground);
+  }
+  .step-heading h2 em { font-style: italic; color: var(--gold); }
+  .step-heading p.desc { margin-top: 1.1rem; max-width: 640px; font-size: .9rem; line-height: 1.75; color: var(--muted); }
+
+  .step-body {
+    display: flex; flex-direction: column; gap: 2.75rem;
+    border: 1px solid var(--border); background: rgba(15,26,18,.4); padding: 1.5rem;
+  }
+  @media (min-width: 640px) { .step-body { padding: 2.5rem; } }
+
+  .field-label { display: block; margin-bottom: .9rem; }
+  .field-label .txt { display: block; font-size: .78rem; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-light); }
+  .field-label .hint { display: block; margin-top: .35rem; font-size: .85rem; line-height: 1.6; color: var(--muted-light); max-width: 46ch; }
+
+  fieldset { border: none; }
+  legend { padding: 0; width: 100%; }
+
+  .option-grid { display: grid; grid-template-columns: 1fr; gap: .5rem; }
+  @media (min-width: 640px) {
+    .option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .option-radio { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .option-card {
+    display: flex; align-items: flex-start; gap: .75rem;
+    border: 1px solid var(--border); background: var(--field-bg);
+    padding: 14px 16px; cursor: pointer; transition: all .2s;
+  }
+  .option-card:hover { border-color: var(--border-strong); background: var(--field-bg-hover); }
+  .option-radio:checked + .option-card { border-color: var(--gold); background: var(--surface-raised); }
+  .option-radio:focus-visible + .option-card { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .option-dot { margin-top: 3px; width: 10px; height: 10px; flex-shrink: 0; border: 1px solid var(--border-strong); background: transparent; transition: all .2s; }
+  .option-radio:checked + .option-card .option-dot { border-color: var(--gold); background: var(--gold); }
+  .option-card .option-text { display: flex; flex-direction: column; gap: .25rem; }
+  .option-card .option-label { font-size: .875rem; line-height: 1.4; color: rgba(245,243,238,.8); }
+  .option-radio:checked + .option-card .option-label { color: var(--foreground); }
+  .option-card .option-hint { font-size: .82rem; color: var(--muted-light); }
+
+  .money-field, .text-field { display: block; }
+  .money-box { display: flex; align-items: stretch; border: 1px solid var(--border); background: var(--field-bg); transition: border-color .2s; }
+  .money-box:focus-within { border-color: var(--gold); }
+  .money-prefix { display: flex; align-items: center; border-right: 1px solid var(--border); padding: 0 .9rem; font-size: .82rem; letter-spacing: .05em; color: var(--muted-light); }
+  .money-box input {
+    width: 100%; background: transparent; border: none; outline: none;
+    padding: .8rem .9rem; text-align: right; font-family: 'Inter', sans-serif; font-size: 1rem;
+    color: var(--foreground); font-variant-numeric: tabular-nums;
+  }
+  .money-box input::placeholder { color: rgba(138,136,128,.4); }
+
+  .text-field input {
+    width: 100%; border: 1px solid var(--border); background: var(--field-bg);
+    padding: .8rem .9rem; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--foreground);
+    outline: none; transition: border-color .2s;
+  }
+  .text-field input:focus { border-color: var(--gold); }
+  .text-field input::placeholder { color: rgba(138,136,128,.4); }
+
+  .field-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 640px) { .field-grid.cols-2 { grid-template-columns: 1fr 1fr; } }
+
+  .action-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .75rem;
+    border: 1px solid var(--gold); background: var(--gold); color: var(--background);
+    padding: 14px 28px; font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 500;
+    letter-spacing: .2em; text-transform: uppercase; text-decoration: none; cursor: pointer;
+    transition: all .2s;
+  }
+  .action-btn:hover:not(:disabled) { background: var(--gold-deep); border-color: var(--gold-deep); }
+  .action-btn:disabled { cursor: not-allowed; opacity: .35; }
+  .action-btn.ghost { background: transparent; border-color: var(--border-strong); color: rgba(245,243,238,.8); }
+  .action-btn.ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 2.5rem; }
+
+  /* ---------- Consentimento ---------- */
+  .consent-block { display: flex; align-items: flex-start; gap: .8rem; padding: 1rem 1.1rem; border: 1px solid var(--border); background: var(--field-bg); }
+  .consent-block input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--gold); flex-shrink: 0; }
+  .consent-block label { font-size: .875rem; line-height: 1.65; color: rgba(245,243,238,.85); }
+  .consent-block label a { color: var(--gold); text-decoration: underline; }
+  .consent-block.required { border-color: rgba(184,148,90,.35); }
+  .consent-required-mark { color: var(--gold); }
+
+  /* ---------- Result panel ---------- */
+  #result-panel { display: none; flex-direction: column; gap: 3.5rem; }
+  #result-panel.active { display: flex; }
+  .result-section { display: flex; flex-direction: column; gap: 1.5rem; }
+  .result-section h2 { max-width: 780px; font-size: clamp(1.6rem, 2.8vw, 2.4rem); line-height: 1.2; letter-spacing: -.01em; }
+  .result-section h2 em { font-style: italic; color: var(--gold); }
+  .result-section > p { max-width: 660px; font-size: .9rem; line-height: 1.75; color: var(--muted); }
+
+  .faixa-panel { border: 1px solid var(--border); background: var(--field-bg); padding: 2rem; }
+  @media (min-width: 768px) { .faixa-panel { padding: 2.5rem; } }
+  .faixa-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
+  .faixa-item .lbl { font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-light); }
+  .faixa-item .val { margin-top: .5rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: rgba(245,243,238,.8); }
+  .faixa-item.center { text-align: center; }
+  .faixa-item.right { text-align: right; }
+  .faixa-item.center .val { font-size: clamp(2rem, 4vw, 2.6rem); color: var(--gold); }
+  .faixa-ruler { position: relative; margin-top: 2.25rem; height: 3px; width: 100%; background: var(--border-strong); }
+  .faixa-ruler .rule-fill { position: absolute; inset: 0; opacity: .5; background: linear-gradient(to right, var(--gold), rgba(184,148,90,.2)); }
+  .faixa-ruler .marker { position: absolute; top: -7px; left: 50%; width: 2px; height: 16px; background: var(--gold); }
+  .faixa-note { margin-top: 1.25rem; font-size: .85rem; line-height: 1.7; color: var(--muted-light); }
+
+  .metric-grid { display: grid; grid-template-columns: 1fr; gap: 2rem 2.5rem; }
+  @media (min-width: 640px) { .metric-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .metric-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .metric { border-top: 1px solid var(--border); padding-top: 1rem; }
+  .metric .lbl { font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-light); }
+  .metric .val { margin-top: .5rem; font-size: 1.2rem; font-variant-numeric: tabular-nums; color: var(--foreground); }
+  .metric .note { margin-top: .3rem; font-size: .8rem; line-height: 1.5; color: var(--muted-light); }
+
+  .fatores-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem 2.5rem; }
+  @media (min-width: 640px) { .fatores-grid { grid-template-columns: 1fr 1fr; } }
+  .fator-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: .75rem; }
+  .fator-row .f-label { font-size: .875rem; color: rgba(245,243,238,.8); }
+  .fator-row .f-delta { flex-shrink: 0; font-size: .875rem; font-variant-numeric: tabular-nums; }
+  .fator-row .f-delta.pos { color: var(--gold); }
+  .fator-row .f-delta.neg { color: var(--destructive); }
+
+  .alertas-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; }
+  .alertas-list li { display: flex; gap: 1rem; border-left: 1px solid rgba(184,148,90,.4); padding-left: 1.25rem; }
+  .alertas-list p { font-size: .875rem; line-height: 1.7; color: var(--muted); }
+
+  .cta-panel { border: 1px solid var(--border-strong); background: rgba(8,44,32,.4); padding: 2rem; }
+  @media (min-width: 768px) { .cta-panel { padding: 3rem; } }
+  .cta-panel h3 { margin-top: 1.5rem; max-width: 640px; font-size: clamp(1.35rem, 2.4vw, 1.9rem); line-height: 1.3; letter-spacing: -.01em; }
+  .cta-panel h3 em { font-style: italic; color: var(--gold); }
+  .cta-panel > p { margin-top: 1.25rem; max-width: 640px; font-size: .875rem; line-height: 1.7; color: var(--muted); }
+  .cta-panel .btn-row { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+
+  .disclaimer { border-top: 1px solid var(--border); padding-top: 2rem; font-size: .8125rem; line-height: 1.75; color: var(--muted-light); }
+
+  .form-status-note { display: none; margin-top: 1rem; font-size: .85rem; line-height: 1.7; color: var(--muted-light); border: 1px solid var(--border); background: var(--field-bg); padding: 1rem 1.25rem; }
+  .form-status-note.show { display: block; }
+  .form-status-note.error { border-color: rgba(193,121,90,.5); color: #e7b199; }
+
+  /* ---------- Footer ---------- */
+  footer.site-footer { border-top: 1px solid var(--border); }
+  .footer-inner { max-width: 1240px; margin: 0 auto; padding: 3.5rem 6%; }
+  .footer-bottom { font-size: .8125rem; color: var(--muted-light); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="https://www.demconsultoriafinanceira.com/" class="header-logo">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA2EAAAHPCAYAAADahdKIAAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nO3dvZMbZbr38R9PEZyOBp9/YNRserrsU5C7t4qN7ROwqYdkCe2NIGPIIMKEkFhOcbDjGFfRzqEYl+K1Zv6BNRMp5An6lqdHlmakVvd9XXf391NFLXhnpMtSv/3u1/f+/PNPAQAAAADi+H/WBQAAAADAmBDCAAAAACAiQhgAAAAAREQIAwAAAICICGEAAAAAEBEhDAAAAAAiIoQBAAAAQESEMAAAAACIiBAGAAAAABERwgAAAAAgIkIYAAAAAERECAMAAACAiAhhAAAAABARIQwAAAAAIiKEAQAAAEBEhDAAAAAAiIgQBgAAAAAREcIAAAAAICJCGAAAAABERAgDAAAAgIgIYQAAAAAQESEMAAAAACIihAEAAABARIQwAAAAAIiIEAYAAAAAERHCAAAAACAiQhgAAAAAREQIAwAAAICICGEAAAAAEBEhDAAAAAAiIoQBAAAAQESEMAAAAACIiBAGAAAAABERwgAAAAAgIkIYAAAAAERECAMAAACAiAhhAAAAABARIQwAAAAAIiKEAQAAAEBEhDAAAAAAiIgQBgAAAAAREcIAAAAAICJCGAAAAABERAgDAAAAgIgIYQAAAAAQESEMAAAAACIihAEAAABARIQwAAAAAIiIEAYAAAAAERHCAAAAACAiQhgAAAAAREQIAwAAAICICGEAAAAAEBEhDAAAAAAi+v+ULQfoSbVJOwAAAABJRU5ErkJggg==" alt="D&amp;M Consultoria Financeira" width="865" height="463" loading="eager" decoding="async"/>
+    </a>
+    <nav class="header-nav">
+      <span class="tool-label">Versão simplificada</span>
+      <a href="/valuation/completa/" class="tool-nav-link">Versão completa</a>
+      <a href="https://www.demconsultoriafinanceira.com/#contact-form" class="contato-link">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero-band">
+  <div class="grid-backdrop" style="position:absolute; inset:0; opacity:.7;"></div>
+  <div class="hero-bg-radial"></div>
+  <div class="hero-inner">
+    <div class="eyebrow-row"><span class="gold-rule"></span><span class="eyebrow">Estimativa rápida</span></div>
+    <h1>Uma primeira noção do valor,<br/><em>sem precisar de balanço.</em></h1>
+    <p class="lead">Para quem ainda não tem números organizados. Seis perguntas simples, múltiplos setoriais de mercado e uma faixa honesta de valor.</p>
+  </div>
+</section>
+
+<main id="main-content">
+  <div class="simples-wrap">
+
+    <div id="form-section">
+      <div class="step-heading">
+        <div class="eyebrow-row"><span class="gold-rule"></span><span class="eyebrow">Versão simplificada · 6 perguntas</span></div>
+        <h2>Seis perguntas para uma primeira ideia do <em>valor da sua empresa.</em></h2>
+        <p class="desc">Sem balanço, sem DRE, sem planilha. Responda com o que você já sabe de cabeça — a estimativa sai na hora.</p>
+      </div>
+
+      <div class="step-body">
+        <fieldset>
+          <legend><span class="field-label"><span class="txt">Em que setor a empresa atua?</span></span></legend>
+          <div class="option-grid cols-2" data-group="setor"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="field-label"><span class="txt">O faturamento que você vai informar é</span></span></legend>
+          <div class="option-grid cols-2" data-group="periodo"></div>
+        </fieldset>
+
+        <label class="money-field"><span class="field-label"><span class="txt" id="lbl-receita">Faturamento mensal</span><span class="hint">Valor bruto de vendas, antes de qualquer dedução.</span></span>
+          <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="receita"></span>
+        </label>
+
+        <fieldset>
+          <legend><span class="field-label"><span class="txt">Do que entra, quanto sobra de lucro?</span><span class="hint">Uma percepção aproximada já é suficiente.</span></span></legend>
+          <div class="option-grid" data-group="lucratividade"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="field-label"><span class="txt">Como está a evolução das vendas?</span></span></legend>
+          <div class="option-grid cols-2" data-group="crescimento"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="field-label"><span class="txt">A empresa funciona sem você?</span></span></legend>
+          <div class="option-grid" data-group="dependenciaSocio"></div>
+        </fieldset>
+
+        <label class="money-field"><span class="field-label"><span class="txt">Saldo total de dívidas hoje <span style="text-transform:none;letter-spacing:0;">(opcional)</span></span><span class="hint">Some o valor total que ainda falta pagar — não a parcela mensal. Inclui empréstimos bancários, financiamentos, cheque especial e parcelamentos tributários em aberto. Deixe em branco se não houver.</span></span>
+          <span class="money-box"><span class="money-prefix">R$</span><input type="text" inputmode="numeric" placeholder="0" data-money="dividas"></span>
+        </label>
+
+        <div class="field-grid cols-2">
+          <label class="text-field"><span class="field-label"><span class="txt">Nome completo</span></span><input type="text" placeholder="Seu nome" data-text="nome" autocomplete="name"></label>
+          <label class="text-field"><span class="field-label"><span class="txt">E-mail corporativo</span></span><input type="email" placeholder="nome@empresa.com.br" data-text="email" autocomplete="email"></label>
+          <label class="text-field"><span class="field-label"><span class="txt">Telefone / WhatsApp</span></span><input type="tel" placeholder="(00) 00000-0000" maxlength="20" data-text="telefone" autocomplete="tel"></label>
+          <label class="text-field"><span class="field-label"><span class="txt">Empresa</span></span><input type="text" placeholder="Razão social ou nome fantasia" data-text="empresa" autocomplete="organization"></label>
+          <label class="text-field"><span class="field-label"><span class="txt">Cargo <span style="text-transform:none;letter-spacing:0;">(opcional)</span></span></span><input type="text" placeholder="Sócio, diretor, CFO" data-text="cargo" autocomplete="organization-title"></label>
+        </div>
+
+        <div class="consent-block required">
+          <input type="checkbox" id="consent-tratamento" data-consent="tratamento">
+          <label for="consent-tratamento">Li a <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e concordo com o tratamento dos dados informados para geração desta estimativa, incluindo o recebimento de contato da D&amp;M sobre este resultado. <span class="consent-required-mark">*</span></label>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="action-btn" id="btn-calcular" disabled>Calcular estimativa</button>
+        <a href="/valuation/completa/" class="header-nav" style="border-bottom:1px solid rgba(184,148,90,.5); padding-bottom:2px; font-size:.76rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); text-decoration:none;">Tenho os dados completos</a>
+      </div>
+    </div>
+
+    <div id="result-panel"></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-bottom">© <span id="foot-year">2026</span> D&amp;M Consultoria Financeira. Estimativa de caráter informativo, sem natureza de laudo de avaliação.</p>
+  </div>
+</footer>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var E = window.ValuationEngineSimples;
+
+  var LEAD_ENDPOINT = 'https://hooks.zapier.com/hooks/catch/28462407/46s6s2b/';
+  var POLITICA_VERSAO = "2026-08-08";
+
+  var FAIXAS_FATURAMENTO = [
+    { max: 1000000,     label: "Até R$ 1 milhão por ano" },
+    { max: 5000000,     label: "De R$ 1 milhão a R$ 5 milhões" },
+    { max: 10000000,    label: "De R$ 5 milhões a R$ 10 milhões" },
+    { max: 30000000,    label: "De R$ 10 milhões a R$ 30 milhões" },
+    { max: 100000000,   label: "De R$ 30 milhões a R$ 100 milhões" },
+    { max: Infinity,    label: "Acima de R$ 100 milhões" }
+  ];
+  function bucketFaturamento(receitaAnual) {
+    for (var i = 0; i < FAIXAS_FATURAMENTO.length; i++) {
+      if (receitaAnual <= FAIXAS_FATURAMENTO[i].max) return FAIXAS_FATURAMENTO[i].label;
+    }
+    return FAIXAS_FATURAMENTO[FAIXAS_FATURAMENTO.length - 1].label;
+  }
+
+  var form = {
+    setor: "", periodo: "mensal", receita: null,
+    lucratividade: "", crescimento: "", dependenciaSocio: "", dividas: null,
+    nome: "", email: "", telefone: "", empresa: "", cargo: "",
+    consentTratamento: false
+  };
+  var leadEnviando = false;
+  var leadJaEnviado = false;
+
+  var emailValido = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
+
+  function buildOptionGroup(container, groupName, options) {
+    container.innerHTML = "";
+    options.forEach(function (o, idx) {
+      var id = "opt-" + groupName + "-" + idx;
+      var wrap = document.createElement("div");
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = groupName; input.id = id; input.value = o.value; input.className = "option-radio";
+      var label = document.createElement("label");
+      label.setAttribute("for", id); label.className = "option-card";
+      var dot = document.createElement("span"); dot.className = "option-dot";
+      var textWrap = document.createElement("span"); textWrap.className = "option-text";
+      var lbl = document.createElement("span"); lbl.className = "option-label"; lbl.textContent = o.label;
+      textWrap.appendChild(lbl);
+      label.appendChild(dot); label.appendChild(textWrap);
+      wrap.appendChild(input); wrap.appendChild(label);
+      container.appendChild(wrap);
+      input.addEventListener("change", function () { form[groupName] = o.value; atualizarBotao(); });
+    });
+  }
+
+  document.querySelectorAll('[data-group="setor"]').forEach(function (el) { buildOptionGroup(el, "setor", E.SETORES); });
+  document.querySelectorAll('[data-group="periodo"]').forEach(function (el) { buildOptionGroup(el, "periodo", E.PERIODO_SIMPLES); });
+  document.querySelectorAll('[data-group="lucratividade"]').forEach(function (el) { buildOptionGroup(el, "lucratividade", E.LUCRATIVIDADE); });
+  document.querySelectorAll('[data-group="crescimento"]').forEach(function (el) { buildOptionGroup(el, "crescimento", E.CRESCIMENTO_SIMPLES); });
+  document.querySelectorAll('[data-group="dependenciaSocio"]').forEach(function (el) { buildOptionGroup(el, "dependenciaSocio", E.DEPENDENCIA_SIMPLES); });
+
+  // período começa em "mensal" por padrão — marca a opção correspondente já de início
+  (function () {
+    var def = document.querySelector('input[name="periodo"][value="mensal"]');
+    if (def) def.checked = true;
+  })();
+
+  function digitsOnly(s) { return s.replace(/\D/g, ""); }
+  function fmtNum(v) { return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(v); }
+
+  document.querySelectorAll('[data-money]').forEach(function (input) {
+    input.addEventListener("input", function () {
+      var d = digitsOnly(input.value);
+      var key = input.getAttribute("data-money");
+      var val = d === "" ? null : Math.min(Number(d), 999999999999);
+      form[key] = val;
+      input.value = val === null ? "" : fmtNum(val);
+      atualizarBotao();
+    });
+  });
+
+  document.querySelectorAll('[data-text]').forEach(function (input) {
+    input.addEventListener("input", function () { form[input.getAttribute("data-text")] = input.value; atualizarBotao(); });
+  });
+
+  document.getElementById("consent-tratamento").addEventListener("change", function (e) {
+    form.consentTratamento = e.target.checked; atualizarBotao();
+  });
+
+  // rótulo do campo de faturamento muda com o período
+  document.querySelectorAll('input[name="periodo"]').forEach(function (r) {
+    r.addEventListener("change", function () {
+      document.getElementById("lbl-receita").textContent = form.periodo === "mensal" ? "Faturamento mensal" : "Faturamento anual";
+    });
+  });
+
+  function completo() {
+    return !!form.setor && !!form.lucratividade && !!form.crescimento && !!form.dependenciaSocio &&
+      (form.receita || 0) > 0 &&
+      form.nome.trim().length > 2 && emailValido(form.email) &&
+      form.telefone.replace(/\D/g, "").length >= 10 && form.empresa.trim().length > 1 &&
+      form.consentTratamento === true;
+  }
+
+  var btnCalcular = document.getElementById("btn-calcular");
+  function atualizarBotao() { btnCalcular.disabled = !completo(); }
+
+  btnCalcular.addEventListener("click", function () {
+    if (!completo()) return;
+    var input = {
+      setor: form.setor, periodo: form.periodo, receita: form.receita || 0,
+      lucratividade: form.lucratividade, crescimento: form.crescimento,
+      dependenciaSocio: form.dependenciaSocio, dividas: form.dividas || 0
+    };
+    var result = E.calcularValuationSimples(input);
+    renderResult(result);
+  });
+
+  function metricEl(label, value, note) {
+    var div = document.createElement("div"); div.className = "metric";
+    div.innerHTML = '<p class="lbl"></p><p class="val"></p>' + (note ? '<p class="note"></p>' : '');
+    div.querySelector(".lbl").textContent = label;
+    div.querySelector(".val").textContent = value;
+    if (note) div.querySelector(".note").textContent = note;
+    return div;
+  }
+  function eyebrowRow(text) {
+    var d = document.createElement("div"); d.className = "eyebrow-row";
+    d.innerHTML = '<span class="gold-rule"></span><span class="eyebrow"></span>';
+    d.querySelector(".eyebrow").textContent = text;
+    return d;
+  }
+
+  function renderResult(result) {
+    document.getElementById("form-section").style.display = "none";
+    var panel = document.getElementById("result-panel");
+    panel.classList.add("active");
+    panel.innerHTML = "";
+
+    if (!result.valido) {
+      var sec = document.createElement("div"); sec.className = "result-section";
+      sec.appendChild(eyebrowRow("Estimativa indisponível"));
+      var p = document.createElement("p"); p.textContent = result.mensagem;
+      sec.appendChild(p);
+      var back = document.createElement("button");
+      back.type = "button"; back.className = "action-btn ghost"; back.textContent = "Voltar";
+      back.style.alignSelf = "flex-start";
+      back.addEventListener("click", refazer);
+      sec.appendChild(back);
+      panel.appendChild(sec);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    var r1 = document.createElement("section"); r1.className = "result-section";
+    r1.appendChild(eyebrowRow("Estimativa preliminar"));
+    var h2 = document.createElement("h2");
+    h2.innerHTML = "Sua empresa vale, de forma aproximada, <em>" + E.brl(result.valorBase) + "</em>";
+    r1.appendChild(h2);
+    var pr = document.createElement("p");
+    pr.textContent = "Estimativa construída por múltiplo setorial de EV/EBITDA, com base em poucas informações. A faixa abaixo é intencionalmente larga — ela reflete o grau de aproximação dos dados utilizados.";
+    r1.appendChild(pr);
+    panel.appendChild(r1);
+
+    var min = result.valorMin, max = result.valorMax;
+    var s2 = document.createElement("section"); s2.className = "faixa-panel";
+    s2.innerHTML =
+      '<div class="faixa-row">' +
+        '<div class="faixa-item"><p class="lbl">Piso da faixa</p><p class="val">' + E.brl(min) + '</p></div>' +
+        '<div class="faixa-item center"><p class="eyebrow">Valor de referência</p><p class="val">' + E.brl(result.valorBase) + '</p></div>' +
+        '<div class="faixa-item right"><p class="lbl">Teto da faixa</p><p class="val">' + E.brl(max) + '</p></div>' +
+      '</div>' +
+      '<div class="faixa-ruler"><div class="rule-fill"></div><div class="marker"></div></div>';
+    panel.appendChild(s2);
+
+    var s3 = document.createElement("section"); s3.className = "result-section";
+    s3.appendChild(eyebrowRow("Como chegamos nesse número"));
+    var grid = document.createElement("div"); grid.className = "metric-grid";
+    grid.appendChild(metricEl("Faturamento anual", E.brl(result.receitaAnual)));
+    grid.appendChild(metricEl("Lucro operacional estimado", E.brl(result.ebitda), "Margem de " + E.pct(result.margemUsada) + (result.margemEstimada ? " (média do setor)" : "")));
+    grid.appendChild(metricEl("Múltiplo aplicado", result.multiploAjustado.toFixed(1) + "x", "Referência do setor: " + result.multiploSetor.toFixed(1) + "x"));
+    grid.appendChild(metricEl("Valor da operação", E.brl(result.enterpriseValue)));
+    grid.appendChild(metricEl("Dívidas informadas", E.brl(result.dividas)));
+    s3.appendChild(grid);
+    panel.appendChild(s3);
+
+    var s4 = document.createElement("section"); s4.className = "result-section";
+    s4.appendChild(eyebrowRow("Fatores considerados"));
+    var fgrid = document.createElement("div"); fgrid.className = "fatores-grid";
+    result.ajustes.forEach(function (f) {
+      var delta = (f.fator - 1) * 100;
+      var pos = delta >= 0;
+      var row = document.createElement("div"); row.className = "fator-row";
+      row.innerHTML = '<span class="f-label"></span><span class="f-delta ' + (pos ? "pos" : "neg") + '"></span>';
+      row.querySelector(".f-label").textContent = f.label;
+      row.querySelector(".f-delta").textContent = (pos ? "+" : "") + delta.toFixed(1) + "%";
+      fgrid.appendChild(row);
+    });
+    s4.appendChild(fgrid);
+    panel.appendChild(s4);
+
+    var s5 = document.createElement("section"); s5.className = "result-section";
+    s5.appendChild(eyebrowRow("Leitura técnica"));
+    var ul = document.createElement("ul"); ul.className = "alertas-list";
+    result.observacoes.forEach(function (o) {
+      var li = document.createElement("li"); var pp = document.createElement("p"); pp.textContent = o; li.appendChild(pp); ul.appendChild(li);
+    });
+    s5.appendChild(ul);
+    panel.appendChild(s5);
+
+    var s6 = document.createElement("section"); s6.className = "cta-panel";
+    s6.appendChild(eyebrowRow("Próximo passo"));
+    var h3 = document.createElement("h3");
+    h3.innerHTML = 'Quer um número mais <em>preciso</em>?';
+    s6.appendChild(h3);
+    var pcta = document.createElement("p");
+    pcta.textContent = "Com receita, custos, ativos e passivos em mãos, a versão completa aplica fluxo de caixa descontado, ponte de dívida líquida e um diagnóstico de prontidão para transação.";
+    s6.appendChild(pcta);
+    var btnRow = document.createElement("div"); btnRow.className = "btn-row";
+    var ctaCompleta = document.createElement("a");
+    ctaCompleta.href = "/valuation/completa/"; ctaCompleta.className = "action-btn"; ctaCompleta.textContent = "Ir para a versão completa";
+    btnRow.appendChild(ctaCompleta);
+    var ctaWa = document.createElement("a");
+    ctaWa.href = "https://wa.me/5519999994706?text=" + encodeURIComponent("Olá! Fiz uma simulação na Calculadora de Valuation Simplificada da D&M. Valor de referência: " + E.brl(result.valorBase) + " (faixa entre " + E.brl(result.valorMin) + " e " + E.brl(result.valorMax) + "). Gostaria de conversar sobre uma avaliação mais aprofundada.");
+    ctaWa.target = "_blank"; ctaWa.rel = "noopener noreferrer"; ctaWa.className = "action-btn ghost"; ctaWa.textContent = "Falar com a D&M";
+    btnRow.appendChild(ctaWa);
+    var btnRefazer = document.createElement("button");
+    btnRefazer.type = "button"; btnRefazer.className = "action-btn ghost"; btnRefazer.textContent = "Refazer";
+    btnRefazer.addEventListener("click", refazer);
+    btnRow.appendChild(btnRefazer);
+    s6.appendChild(btnRow);
+    s6.innerHTML += '<div class="form-status-note" id="lead-status-note"></div>';
+    panel.appendChild(s6);
+
+    var disc = document.createElement("p"); disc.className = "disclaimer";
+    disc.textContent = "Aviso metodológico: estimativa preliminar gerada a partir de informações declaradas e de múltiplos setoriais de referência. Não constitui laudo de avaliação, parecer de valor justo ou preço de transação. D&M Consultoria Financeira.";
+    panel.appendChild(disc);
+
+    enviarLead(result);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function refazer() {
+    // Mantém os valores já digitados — só volta para o formulário (mesmo comportamento do protótipo original)
+    document.getElementById("form-section").style.display = "";
+    document.getElementById("result-panel").classList.remove("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function enviarLead(result) {
+    var noteEl = document.getElementById("lead-status-note");
+    if (leadJaEnviado || leadEnviando) return;
+    if (!LEAD_ENDPOINT) return;
+    leadEnviando = true;
+
+    var setorInfo = E.getSetor(form.setor);
+    var receitaAnual = form.periodo === "mensal" ? (form.receita || 0) * 12 : (form.receita || 0);
+
+    var payload = {
+      nome: form.nome,
+      empresa: form.empresa,
+      cargo: form.cargo,
+      email: form.email,
+      whatsapp: form.telefone,
+      segmento: setorInfo ? setorInfo.label : form.setor,
+      faturamento: bucketFaturamento(receitaAnual),
+      desafio: "Estimativa rápida (versão simplificada)",
+      mensagem: "Calculadora de Valuation (simplificada) — Valor de referência: " + E.brl(result.valorBase) + " | Faixa: " + E.brl(result.valorMin) + " a " + E.brl(result.valorMax),
+      consentimento_tratamento: true,
+      consentimento_data: new Date().toISOString(),
+      origem: "calculadora_valuation_simplificada",
+      versao_politica: POLITICA_VERSAO
+    };
+
+    // SEM header "Content-Type": declarar esse header dispara um preflight CORS que
+    // a configuração deste catch hook do Zapier rejeita (ver valuation/completa/index.html
+    // para o detalhamento do problema e da correção). Sem o header, o navegador manda
+    // como "text/plain" (sem preflight) e o Zapier reconhece o corpo como JSON do mesmo jeito.
+    fetch(LEAD_ENDPOINT, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      leadEnviando = false;
+      if (res && res.ok) {
+        leadJaEnviado = true;
+        if (noteEl) { noteEl.textContent = "Recebemos suas informações. Nossa equipe pode entrar em contato para aprofundar esta conversa."; noteEl.classList.add("show"); }
+      } else {
+        if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
+      }
+    }).catch(function () {
+      leadEnviando = false;
+      if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
+    });
+  }
+
+  var footYear = document.getElementById("foot-year");
+  if (footYear) footYear.textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
