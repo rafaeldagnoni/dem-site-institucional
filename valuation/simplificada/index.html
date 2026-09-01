@@ -299,6 +299,66 @@
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   }
+
+  /* ---------- Impressão / PDF do resultado ---------- */
+  .print-header { display: none; }
+  @media print {
+    :root {
+      --background: #ffffff;
+      --foreground: #14140f;
+      --surface: #f5f3ee;
+      --surface-raised: #ece7db;
+      --gold: #7a5f36;
+      --gold-deep: #6b532e;
+      --muted: #4a4844;
+      --muted-light: #3a3834;
+      --border: rgba(20,20,15,.18);
+      --border-strong: rgba(20,20,15,.32);
+      --field-bg: #f5f3ee;
+      --field-bg-hover: #f5f3ee;
+    }
+    html, body { background: #ffffff; color: #14140f; }
+    .skip-link, header.site-header, .hero-band, #form-section,
+    footer.site-footer, .grid-backdrop, .hero-bg-radial, .btn-row, .form-status-note,
+    .no-print { display: none !important; }
+    main { padding: 0; max-width: 100%; }
+    #result-panel { display: flex !important; gap: 1.75rem; }
+    .print-header { display: block; margin-bottom: 1rem; }
+    .print-header img { height: 30px; width: auto; }
+    .print-header .print-meta { margin-top: .5rem; font-size: .75rem; color: #4a4844; }
+    .faixa-panel, .cta-panel, .form-status-note { border: 1px solid var(--border); background: var(--field-bg) !important; }
+    .cta-panel { background: #f5f3ee !important; }
+    .faixa-item .val, .fator-row .f-label, .result-section > p strong { color: #14140f; }
+    .disclaimer { color: var(--muted); }
+    a[href^="http"]::after { content: ""; }
+    .action-btn { display: none !important; }
+    @page { margin: 16mm 14mm; }
+  }
+
+  /* ---------- Modo de exportação para PDF (jsPDF + html2canvas) ----------
+     Mantém a identidade visual real do site (fundo escuro, dourado, tipografia)
+     — diferente do @media print acima, que é só um fallback de impressão em
+     papel. Layout vertical, largura próxima da usada normalmente no desktop. */
+  .pdf-export-mode #result-panel {
+    display: flex !important; width: 1040px; max-width: none; padding: 40px;
+    background: var(--background); box-sizing: border-box;
+  }
+  /* Cada filho direto de #result-panel é fotografado INDIVIDUALMENTE (ver gerarPdf()),
+     não o painel inteiro de uma vez — então o padding do painel acima não chega mais
+     visualmente ao conteúdo de cada bloco. Replicamos aqui um respiro equivalente
+     diretamente nos blocos "soltos" (sem caixa/borda própria); blocos que já têm
+     padding próprio (faixa-panel, cta-panel) não precisam. */
+  .pdf-export-mode #result-panel > .result-section,
+  .pdf-export-mode #result-panel > .disclaimer,
+  .pdf-export-mode #result-panel > .print-header {
+    padding-left: 6px; padding-right: 6px; box-sizing: border-box;
+  }
+  .pdf-export-mode .print-header { display: block; margin-bottom: 1rem; }
+  .pdf-export-mode .print-header img { height: 34px; width: auto; filter: brightness(0) invert(1); }
+  .pdf-export-mode .print-header .print-meta { margin-top: .6rem; font-size: .8rem; color: var(--muted-light); }
+  .pdf-export-mode .metric-grid { grid-template-columns: 1fr 1fr 1fr !important; }
+  .pdf-export-mode .fatores-grid { grid-template-columns: 1fr 1fr !important; }
+  .pdf-export-mode .btn-row, .pdf-export-mode .form-status-note, .pdf-export-mode .action-btn { display: none !important; }
   </style>
 </head>
 <body>
@@ -401,6 +461,10 @@
   </div>
 </footer>
 
+<!-- jsPDF + html2canvas: geração do PDF do resultado no próprio navegador
+     (mesmas versões usadas em valuation/completa/index.html) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="engine.js"></script>
 <script>
 (function () {
@@ -535,11 +599,153 @@
     return d;
   }
 
+  /* ---------- Geração de PDF (jsPDF + html2canvas) ----------
+     Portado de valuation/completa/index.html (mesma arquitetura, já validada lá):
+     fotografa cada bloco do resultado INDIVIDUALMENTE — não o painel inteiro de
+     uma vez — porque o motor de quebra de linha do html2canvas não bate 100% com
+     o do navegador; medir num lugar e recortar uma captura feita em outro é frágil
+     e corta texto. Ver o comentário completo no arquivo da versão completa. */
+  function nomeArquivoPdf() {
+    var empresa = (form.empresa || "").trim().replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase();
+    var data = new Date().toISOString().slice(0, 10);
+    return "valuation-simplificado-" + (empresa || "simulacao") + "-" + data + ".pdf";
+  }
+
+  function gerarPdf() {
+    if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+      return Promise.reject(new Error("Bibliotecas de PDF não carregadas"));
+    }
+    var root = document.documentElement;
+    var target = document.getElementById("result-panel");
+    root.classList.add("pdf-export-mode");
+
+    var pdf = new window.jspdf.jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
+    var margin = 32;
+    var pageWidth = pdf.internal.pageSize.getWidth();
+    var pageHeight = pdf.internal.pageSize.getHeight();
+    var usableWidthPt = pageWidth - margin * 2;
+    var usableHeightPt = pageHeight - margin * 2;
+
+    var fontsProntas = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    return fontsProntas
+      .catch(function () { /* nunca deixa a ausência de suporte à Font Loading API travar a geração */ })
+      .then(function () { return new Promise(function (resolve) { setTimeout(resolve, 120); }); }) // respiro para o reflow do layout largo aplicar
+      .then(function () {
+        var topElements = Array.prototype.slice.call(target.children).filter(function (el) { return el.offsetHeight > 0; });
+
+        function capturarElemento(el) {
+          return window.html2canvas(el, { scale: 1.4, backgroundColor: "#0a0e0b", useCORS: true }).then(function (canvas) {
+            var alturaPt = canvas.height * (usableWidthPt / canvas.width);
+            if (alturaPt > usableHeightPt && el.children.length > 0) {
+              var filhos = Array.prototype.slice.call(el.children).filter(function (c) { return c.offsetHeight > 0; });
+              return capturarSequencial(filhos);
+            }
+            return [canvas];
+          });
+        }
+
+        function capturarSequencial(elementos, idx, acumulado) {
+          idx = idx || 0; acumulado = acumulado || [];
+          if (idx >= elementos.length) return Promise.resolve(acumulado);
+          return capturarElemento(elementos[idx]).then(function (canvases) {
+            return capturarSequencial(elementos, idx + 1, acumulado.concat(canvases));
+          });
+        }
+
+        return capturarSequencial(topElements);
+      })
+      .then(function (canvasList) {
+        root.classList.remove("pdf-export-mode");
+
+        var COR_FUNDO = [10, 14, 11]; // mesmo valor de --background: #0a0e0b
+        function pintarFundoPagina() {
+          pdf.setFillColor(COR_FUNDO[0], COR_FUNDO[1], COR_FUNDO[2]);
+          pdf.rect(0, 0, pageWidth, pageHeight, "F");
+        }
+        var _addPageOriginal = pdf.addPage.bind(pdf);
+        pdf.addPage = function () { _addPageOriginal(); pintarFundoPagina(); return pdf; };
+        pintarFundoPagina(); // primeira página
+
+        var gapPt = 22;
+        var currentY = margin;
+
+        canvasList.forEach(function (canvas) {
+          var imgHeightPt = canvas.height * (usableWidthPt / canvas.width);
+
+          if (imgHeightPt > usableHeightPt) {
+            var pxPerPt = canvas.width / usableWidthPt;
+            var maxSlicePx = usableHeightPt * pxPerPt;
+            var offsetPx = 0;
+            var sliceCanvas = document.createElement("canvas");
+            var sliceCtx = sliceCanvas.getContext("2d");
+            while (offsetPx < canvas.height) {
+              if (currentY !== margin) { pdf.addPage(); currentY = margin; }
+              var slicePx = Math.min(maxSlicePx, canvas.height - offsetPx);
+              sliceCanvas.width = canvas.width;
+              sliceCanvas.height = slicePx;
+              sliceCtx.clearRect(0, 0, canvas.width, slicePx);
+              sliceCtx.drawImage(canvas, 0, offsetPx, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+              var slicePt = slicePx / pxPerPt;
+              pdf.addImage(sliceCanvas.toDataURL("image/jpeg", 0.78), "JPEG", margin, currentY, usableWidthPt, slicePt);
+              currentY += slicePt;
+              offsetPx += slicePx;
+              if (offsetPx < canvas.height) { pdf.addPage(); currentY = margin; }
+            }
+            currentY += gapPt;
+            return;
+          }
+
+          if (currentY !== margin && currentY + imgHeightPt > pageHeight - margin) {
+            pdf.addPage();
+            currentY = margin;
+          }
+          pdf.addImage(canvas.toDataURL("image/jpeg", 0.78), "JPEG", margin, currentY, usableWidthPt, imgHeightPt);
+          currentY += imgHeightPt + gapPt;
+        });
+
+        return pdf;
+      })
+      .catch(function (err) {
+        root.classList.remove("pdf-export-mode");
+        throw err;
+      });
+  }
+
+  function pdfButtonEl() {
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "action-btn ghost";
+    var textoOriginal = "Baixar PDF";
+    btn.textContent = textoOriginal;
+    btn.addEventListener("click", function () {
+      btn.disabled = true; btn.textContent = "Gerando PDF...";
+      gerarPdf().then(function (pdf) {
+        pdf.save(nomeArquivoPdf());
+      }).catch(function () {
+        window.print(); // se as bibliotecas falharem ao carregar, cai para a impressão nativa
+      }).then(function () {
+        btn.disabled = false; btn.textContent = textoOriginal;
+      });
+    });
+    return btn;
+  }
+
+  function printHeaderEl() {
+    var div = document.createElement("div"); div.className = "print-header";
+    var logoImg = document.querySelector(".header-logo img");
+    var logoSrc = logoImg ? logoImg.src : "";
+    var dataHora = new Date().toLocaleString("pt-BR");
+    div.innerHTML =
+      '<img src="' + logoSrc + '" alt="D&M Consultoria Financeira"/>' +
+      '<p class="print-meta">Estimativa preliminar gerada em ' + dataHora + ' pela Calculadora de Valuation D&amp;M (versão simplificada). Documento de caráter informativo, sem natureza de laudo de avaliação.</p>';
+    return div;
+  }
+
   function renderResult(result) {
     document.getElementById("form-section").style.display = "none";
     var panel = document.getElementById("result-panel");
     panel.classList.add("active");
     panel.innerHTML = "";
+    panel.appendChild(printHeaderEl());
 
     if (!result.valido) {
       var sec = document.createElement("div"); sec.className = "result-section";
@@ -632,8 +838,15 @@
     btnRefazer.type = "button"; btnRefazer.className = "action-btn ghost"; btnRefazer.textContent = "Refazer";
     btnRefazer.addEventListener("click", refazer);
     btnRow.appendChild(btnRefazer);
+    btnRow.appendChild(pdfButtonEl());
     s6.appendChild(btnRow);
-    s6.innerHTML += '<div class="form-status-note" id="lead-status-note"></div>';
+    // IMPORTANTE: usar createElement/appendChild aqui, NUNCA "s6.innerHTML +=" — isso
+    // reserializa e recria todo o conteúdo já inserido em s6 (incluindo os botões acima),
+    // destruindo os addEventListener já anexados a eles (ex.: o clique do "Refazer" parava
+    // de funcionar). Mesmo bug já corrigido antes em valuation/completa/index.html.
+    var noteEl = document.createElement("div");
+    noteEl.className = "form-status-note"; noteEl.id = "lead-status-note";
+    s6.appendChild(noteEl);
     panel.appendChild(s6);
 
     var disc = document.createElement("p"); disc.className = "disclaimer";
