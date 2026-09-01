@@ -828,7 +828,7 @@
      O envio só ocorre se o usuário marcar o consentimento comercial
      (ver função enviarLead). Sem esse consentimento, nada é enviado.
   ============================================================ */
-  var LEAD_ENDPOINT = 'https://hooks.zapier.com/hooks/catch/28462407/46s6s2b/';
+  var LEAD_ENDPOINT = 'https://hook.us2.make.com/cshsp88nys32obd2r7p6kidqkfqv7iti';
   var POLITICA_VERSAO = "2026-08-08"; // atualizar sempre que a política de privacidade mudar substancialmente
   var WHATSAPP_NUMBER = '5519999994706'; // mesmo número usado no site institucional
 
@@ -1667,7 +1667,7 @@
       mensagem: resumoMensagem,
       consentimento_tratamento: true,
       consentimento_data: new Date().toISOString(),
-      origem: "calculadora_valuation",
+      origem: "calculadora_valuation_completa",
       versao_politica: POLITICA_VERSAO
     };
 
@@ -1675,18 +1675,18 @@
     // "Baixar PDF" continua disponível na página para quem quiser salvar o próprio
     // arquivo, mas isso é local, no navegador da pessoa, sem relação com este envio.
     //
-    // IMPORTANTE: propositalmente SEM header "Content-Type: application/json" aqui.
-    // Declarar esse header faz o navegador disparar um preflight CORS (OPTIONS) antes
-    // do POST — e a configuração de CORS deste catch hook do Zapier não inclui
-    // "content-type" em Access-Control-Allow-Headers, então o preflight falha e o POST
-    // real NUNCA chega a ser enviado (erro silencioso: a página só vê uma rejeição
-    // genérica de rede). Sem o header, o navegador manda como "text/plain", que não
-    // exige preflight — e o Zapier reconhece e faz o parse do corpo como JSON do mesmo
-    // jeito. Confirmado testando direto contra o webhook em produção. NÃO reintroduzir
-    // esse header sem testar de novo contra o endpoint real.
+    // IMPORTANTE (histórico): quando o endpoint era o Zapier, era necessário omitir
+    // o header "Content-Type" (o catch hook do Zapier rejeitava o preflight CORS que
+    // esse header dispara). Migrado para o Make em 31/08/2026 — o Make.com PERMITE
+    // "content-type" no preflight (Access-Control-Allow-Headers) e, ao contrário do
+    // Zapier, só separa o corpo em campos individuais quando o Content-Type é
+    // "application/json" de verdade (sem ele, tudo chega como um único campo cru).
+    // Por isso o header foi reintroduzido aqui — confirmado testando direto contra o
+    // webhook do Make em produção. NÃO remover de novo sem testar contra o endpoint real.
     trackEvent("valuation_lead_submit", { location: "valuation" });
     fetch(LEAD_ENDPOINT, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     }).then(function (res) {
       leadEnviando = false;
