@@ -408,7 +408,7 @@
 
   var E = window.ValuationEngineSimples;
 
-  var LEAD_ENDPOINT = 'https://hooks.zapier.com/hooks/catch/28462407/46s6s2b/';
+  var LEAD_ENDPOINT = 'https://hook.us2.make.com/cshsp88nys32obd2r7p6kidqkfqv7iti';
   var POLITICA_VERSAO = "2026-08-08";
 
   var FAIXAS_FATURAMENTO = [
@@ -676,12 +676,15 @@
       versao_politica: POLITICA_VERSAO
     };
 
-    // SEM header "Content-Type": declarar esse header dispara um preflight CORS que
-    // a configuração deste catch hook do Zapier rejeita (ver valuation/completa/index.html
-    // para o detalhamento do problema e da correção). Sem o header, o navegador manda
-    // como "text/plain" (sem preflight) e o Zapier reconhece o corpo como JSON do mesmo jeito.
+    // IMPORTANTE (histórico): quando o endpoint era o Zapier, era necessário omitir
+    // o header "Content-Type" (o catch hook do Zapier rejeitava o preflight CORS que
+    // esse header dispara). Migrado para o Make em 31/08/2026 — o Make.com PERMITE
+    // "content-type" no preflight e só separa o corpo em campos individuais quando o
+    // Content-Type é "application/json" de verdade (ver valuation/completa/index.html
+    // para o detalhamento completo). NÃO remover sem testar contra o endpoint real.
     fetch(LEAD_ENDPOINT, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     }).then(function (res) {
       leadEnviando = false;
