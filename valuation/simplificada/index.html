@@ -359,6 +359,14 @@
   .pdf-export-mode .metric-grid { grid-template-columns: 1fr 1fr 1fr !important; }
   .pdf-export-mode .fatores-grid { grid-template-columns: 1fr 1fr !important; }
   .pdf-export-mode .btn-row, .pdf-export-mode .form-status-note, .pdf-export-mode .action-btn { display: none !important; }
+  /* Geração "silenciosa" (em segundo plano, para anexar ao e-mail automático — ver
+     enviarEmailComPdf()): tira o painel de resultado da tela via position:fixed bem
+     fora da área visível, SEM usar display:none nem visibility:hidden — o html2canvas
+     precisa que o elemento continue de fato desenhado/com layout para conseguir
+     capturá-lo. O usuário nunca vê o "flash" do layout largo de exportação. */
+  .pdf-export-mode.pdf-export-silent #result-panel {
+    position: fixed; top: 0; left: -10000px; z-index: -1; pointer-events: none;
+  }
   </style>
 </head>
 <body>
@@ -611,13 +619,15 @@
     return "valuation-simplificado-" + (empresa || "simulacao") + "-" + data + ".pdf";
   }
 
-  function gerarPdf() {
+  function gerarPdf(opts) {
+    opts = opts || {};
     if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
       return Promise.reject(new Error("Bibliotecas de PDF não carregadas"));
     }
     var root = document.documentElement;
     var target = document.getElementById("result-panel");
     root.classList.add("pdf-export-mode");
+    if (opts.silent) root.classList.add("pdf-export-silent");
 
     var pdf = new window.jspdf.jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
     var margin = 32;
@@ -655,7 +665,7 @@
         return capturarSequencial(topElements);
       })
       .then(function (canvasList) {
-        root.classList.remove("pdf-export-mode");
+        root.classList.remove("pdf-export-mode", "pdf-export-silent");
 
         var COR_FUNDO = [10, 14, 11]; // mesmo valor de --background: #0a0e0b
         function pintarFundoPagina() {
@@ -706,7 +716,7 @@
         return pdf;
       })
       .catch(function (err) {
-        root.classList.remove("pdf-export-mode");
+        root.classList.remove("pdf-export-mode", "pdf-export-silent");
         throw err;
       });
   }
@@ -872,6 +882,7 @@
 
     var setorInfo = E.getSetor(form.setor);
     var receitaAnual = form.periodo === "mensal" ? (form.receita || 0) * 12 : (form.receita || 0);
+    var resumoMensagem = "Calculadora de Valuation (simplificada) — Valor de referência: " + E.brl(result.valorBase) + " | Faixa: " + E.brl(result.valorMin) + " a " + E.brl(result.valorMax);
 
     var payload = {
       nome: form.nome,
@@ -882,7 +893,7 @@
       segmento: setorInfo ? setorInfo.label : form.setor,
       faturamento: bucketFaturamento(receitaAnual),
       desafio: "Estimativa rápida (versão simplificada)",
-      mensagem: "Calculadora de Valuation (simplificada) — Valor de referência: " + E.brl(result.valorBase) + " | Faixa: " + E.brl(result.valorMin) + " a " + E.brl(result.valorMax),
+      mensagem: resumoMensagem,
       consentimento_tratamento: true,
       consentimento_data: new Date().toISOString(),
       origem: "calculadora_valuation_simplificada",
@@ -911,6 +922,50 @@
       leadEnviando = false;
       if (noteEl) { noteEl.textContent = "Não conseguimos confirmar o envio automático agora. Para garantir que sua mensagem chegue, use os canais de contato no rodapé do site."; noteEl.classList.add("show", "error"); }
     });
+
+    // Disparado em paralelo, sem "await" e sem afetar o resultado do envio acima de
+    // forma alguma — ver o comentário completo em enviarEmailComPdf().
+    enviarEmailComPdf(payload.nome, payload.email, resumoMensagem);
+  }
+
+  /* ---------- E-mail de confirmação com PDF anexado (melhor esforço) ----------
+     Roda em paralelo ao envio do lead acima, TOTALMENTE independente dele: nunca
+     atrasa nem pode fazer o envio do lead ao Monday falhar. Gera o PDF em modo
+     "silencioso" (fora da tela — ver .pdf-export-silent no CSS), envia num request
+     separado, marcado com tipo:"pdf_email", que no Make aciona só o passo de e-mail
+     (não cria um segundo item no Monday — ver o Roteador configurado no cenário).
+     Se a geração do PDF falhar OU o arquivo ficar grande demais, o e-mail ainda assim
+     é enviado, só que sem anexo — o e-mail de confirmação é o que importa aqui, o PDF
+     é um extra de melhor esforço. */
+  function enviarEmailComPdf(nome, email, mensagem) {
+    if (!LEAD_ENDPOINT) return;
+    var MAX_BASE64_CHARS = 4000000; // ~3MB de arquivo binário — limite de segurança pro anexo
+
+    gerarPdf({ silent: true })
+      .then(function (pdf) {
+        var dataUri = pdf.output("datauristring"); // "data:application/pdf;base64,XXXX"
+        var base64 = (dataUri.split(",")[1] || "");
+        return base64.length > MAX_BASE64_CHARS ? "" : base64;
+      })
+      .catch(function () { return ""; }) // geração do PDF falhou: manda o e-mail sem anexo mesmo assim
+      .then(function (pdfBase64) {
+        var payloadEmail = {
+          tipo: "pdf_email",
+          nome: nome,
+          email: email,
+          mensagem: mensagem
+        };
+        if (pdfBase64) {
+          payloadEmail.pdf_base64 = pdfBase64;
+          payloadEmail.pdf_filename = nomeArquivoPdf();
+        }
+        return fetch(LEAD_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadEmail)
+        });
+      })
+      .catch(function () { /* melhor esforço: uma falha aqui não afeta mais nada na página */ });
   }
 
   var footYear = document.getElementById("foot-year");
